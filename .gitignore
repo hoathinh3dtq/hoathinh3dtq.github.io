@@ -1,0 +1,22 @@
+﻿# Electron/Chromium binaries
+*.exe
+*.dll
+*.bin
+*.pak
+*.dat
+*.json
+
+# Licenses
+LICENSE.electron.txt
+LICENSES.chromium.html
+
+# Downloaded/scratch directories
+Mục Thần Ký/
+Tiên Nghịch/
+temp_chunks/
+resources/
+locales/
+
+# System files
+.DS_Store
+Thumbs.db

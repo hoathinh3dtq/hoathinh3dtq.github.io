@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - hh3dtq</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-layout { display: flex; min-height: calc(100vh - 140px); }
+    .admin-sidebar { width: 220px; background: #111; border-right: 1px solid #2a2a2a; padding: 20px 0; }
+    .admin-sidebar a { display: block; padding: 12px 20px; color: #ccc; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+    .admin-sidebar a:hover, .admin-sidebar a.active { color: #f5a623; background: #1a1a1a; border-left-color: #f5a623; }
+    .admin-main { flex: 1; padding: 20px 30px; overflow-y: auto; }
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+    .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .admin-table th, .admin-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #2a2a2a; font-size: 13px; }
+    .admin-table th { background: #111; color: #f5a623; font-weight: 600; position: sticky; top: 0; }
+    .admin-table tr:hover { background: #1a1a1a; }
+    .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-family: inherit; }
+    .btn-edit { background: #f5a623; color: #000; }
+    .btn-del { background: #e74c3c; color: #fff; }
+    .btn-add { background: #27ae60; color: #fff; padding: 8px 18px; font-size: 14px; border-radius: 6px; border: none; cursor: pointer; }
+    .admin-form { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-top: 15px; border: 1px solid #2a2a2a; }
+    .admin-form label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
+    .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 8px 12px; background: #0d0d0d; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; font-family: inherit; margin-bottom: 12px; }
+    .admin-form textarea { min-height: 80px; resize: vertical; }
+    .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { outline: none; border-color: #f5a623; }
+    .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 20px; text-align: center; }
+    .stat-card .stat-num { font-size: 32px; font-weight: 900; color: #f5a623; }
+    .stat-card .stat-label { font-size: 13px; color: #888; margin-top: 5px; }
+    .tab-row { display: flex; gap: 2px; margin-bottom: 15px; }
+    .tab-btn { padding: 8px 16px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #ccc; cursor: pointer; font-family: inherit; font-size: 13px; border-radius: 5px 5px 0 0; }
+    .tab-btn.active { background: #f5a623; color: #000; border-color: #f5a623; font-weight: 600; }
+    .episode-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; padding: 8px; background: #0d0d0d; border-radius: 5px; }
+    .episode-row span { font-size: 13px; min-width: 80px; }
+    @media (max-width: 768px) { .admin-layout { flex-direction: column; } .admin-sidebar { width: 100%; display: flex; overflow-x: auto; padding: 0; }
+      .admin-sidebar a { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; } .admin-sidebar a.active { border-bottom-color: #f5a623; border-left: none; }
+      .admin-stats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div class="header-top">
+      <div class="logo">
+        <a href="index.html"><span style="font-size:26px;font-weight:900;color:#f5a623;letter-spacing:2px;">hh3dtq</span></a>
+        <div class="logo-text"><strong>ADMIN PANEL</strong>Quản trị hệ thống</div>
+      </div>
+      <div class="header-actions">
+        <a href="index.html">🏠 Site</a>
+        <a href="javascript:void(0)" onclick="logout()">Đăng Xuất</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout" id="adminLayout" style="display:none;">
+  <aside class="admin-sidebar">
+    <a href="javascript:void(0)" class="active" data-section="dashboard">📊 Dashboard</a>
+    <a href="javascript:void(0)" data-section="anime">🎬 Quản lý Phim</a>
+    <a href="javascript:void(0)" data-section="episodes">📺 Quản lý Tập</a>
+    <a href="javascript:void(0)" data-section="comments">💬 Bình luận</a>
+    <a href="javascript:void(0)" data-section="votes">⭐ Vote</a>
+    <a href="javascript:void(0)" data-section="users">👥 Người dùng</a>
+  </aside>
+  <main class="admin-main" id="adminMain">
+    <!-- Dashboard -->
+    <div class="admin-section active" id="sec-dashboard">
+      <h2 style="color:#f5a623;">📊 Dashboard</h2>
+      <div class="admin-stats" id="statsGrid"></div>
+    </div>
+
+    <!-- Anime Management -->
+    <div class="admin-section" id="sec-anime">
+      <h2 style="color:#f5a623;">🎬 Quản lý Phim</h2>
+      <button class="btn-add" onclick="showAddAnimeForm()">+ Thêm Phim Mới</button>
+      <div class="admin-form" id="animeForm" style="display:none;">
+        <input type="hidden" id="animeId">
+        <label>Tên phim (Tiếng Việt)</label><input type="text" id="animeName" placeholder="VD: Tiên Nghịch">
+        <label>Tên phim (Gốc)</label><input type="text" id="animeNameEn" placeholder="VD: Xian Ni">
+        <label>Thể loại</label><select id="animeGenre"><option>Tu Tiên</option><option>Tiên Hiệp</option><option>Huyền Huyễn</option><option>Đô Thị</option><option>Trùng Sinh</option><option>Hài Hước</option><option>Kiếm Hiệp</option><option>Cổ Trang</option><option>Xuyên Không</option></select>
+        <label>Mô tả</label><textarea id="animeDesc" placeholder="Mô tả phim..."></textarea>
+        <label>URL Ảnh thumbnail</label><input type="text" id="animeThumb" placeholder="https://...">
+        <label>Thời lượng (phút/tập)</label><input type="number" id="animeDuration" value="20">
+        <label>Tổng số tập</label><input type="number" id="animeTotalEp" value="52">
+        <label>Trạng thái</label><select id="animeStatus"><option value="ongoing">Đang chiếu</option><option value="completed">Hoàn thành</option></select>
+        <label>Lịch chiếu (thứ mấy)</label><select id="animeSchedule"><option value="">Không có</option><option value="0">Thứ Hai</option><option value="1">Thứ Ba</option><option value="2">Thứ Tư</option><option value="3">Thứ Năm</option><option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option><option value="6">Chủ Nhật</option></select>
+        <div style="margin-top:10px;">
+          <button class="btn-add" onclick="saveAnime()">💾 Lưu</button>
+          <button class="btn-sm btn-del" onclick="document.getElementById('animeForm').style.display='none'">Hủy</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;margin-top:15px;">
+        <table class="admin-table" id="animeTable">
+          <thead><tr><th>Tên</th><th>Thể loại</th><th>Tập</th><th>TT</th><th>Thao tác</th></tr></thead>
+          <tbody id="animeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Episodes Management -->
+    <div class="admin-section" id="sec-episodes">
+      <h2 style="color:#f5a623;">📺 Quản lý Tập Phim</h2>
+      <div class="admin-form">
+        <label>Chọn phim</label><select id="epAnimeSelect" onchange="loadEpisodesAdmin()"></select>
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+          <div><label>Số tập</label><input type="number" id="epNumber" value="1" style="width:80px;"></div>
+          <div><label>Loại</label><select id="epType"><option value="vietsub">VietSub</option><option value="thuyetminh">Thuyết Minh</option></select></div>
+          <div><label>URL</label><input type="text" id="epUrl" placeholder="Link embed/video"></div>
+          <div><button class="btn-add" onclick="addEpisodeAdmin()">+ Thêm Tập</button></div>
+        </div>
+      </div>
+      <div class="tab-row" style="margin-top:15px;">
+        <button class="tab-btn active" onclick="filterEpisodesAdmin('all',this)">Tất cả</button>
+        <button class="tab-btn" onclick="filterEpisodesAdmin('vietsub',this)">VietSub</button>
+        <button class="tab-btn" onclick="filterEpisodesAdmin('thuyetminh',this)">Thuyết Minh</button>
+      </div>
+      <div id="episodesAdminList"></div>
+    </div>
+
+    <!-- Comments Management -->
+    <div class="admin-section" id="sec-comments">
+      <h2 style="color:#f5a623;">💬 Quản lý Bình luận</h2>
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="commentsTable">
+          <thead><tr><th>Người dùng</th><th>Phim</th><th>Nội dung</th><th>Thời gian</th><th>Xóa</th></tr></thead>
+          <tbody id="commentsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Votes Management -->
+    <div class="admin-section" id="sec-votes">
+      <h2 style="color:#f5a623;">⭐ Quản lý Vote</h2>
+      <p style="color:#888;font-size:13px;margin-bottom:15px;">⚠ Admin có thể sửa số lượng vote nhưng <b style="color:#f5a623;">sao không đổi</b> (chỉ đổi hiển thị số lượt vote)</p>
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="votesTable">
+          <thead><tr><th>Phim</th><th>⭐ Sao TB</th><th>👥 Số lượt</th><th>📝 Sửa số lượt</th></tr></thead>
+          <tbody id="votesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Users Management -->
+    <div class="admin-section" id="sec-users">
+      <h2 style="color:#f5a623;">👥 Người dùng</h2>
+      <div style="overflow-x:auto;">
+        <table class="admin-table" id="usersTable">
+          <thead><tr><th>Email</th><th>Tên</th><th>SĐT</th><th>Role</th><th>Ngày đăng ký</th></tr></thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Admin Login Modal -->
+<div class="modal-overlay active" id="adminLoginModal">
+  <div class="modal">
+    <h2>⚙ Admin Login</h2>
+    <form onsubmit="handleAdminLogin(event);return false">
+      <div class="form-group"><label>Email Admin</label><input type="email" id="adminEmail" placeholder="admin@hh3dtq.com" required></div>
+      <div class="form-group"><label>Mật khẩu</label><input type="password" id="adminPassword" placeholder="Nhập mật khẩu admin" required></div>
+      <button type="submit" class="btn-submit">🔐 Đăng nhập Admin</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/app.js"></script>
+<script>
+// ========== ADMIN PANEL LOGIC ==========
+
+let currentEpFilter = 'all';
+
+function loadAdminPanel() {
+  document.getElementById('adminLoginModal').classList.remove('active');
+  document.getElementById('adminLayout').style.display = 'flex';
+  loadDashboard();
+  loadAnimeTable();
+  loadCommentsAdmin();
+  loadVotesAdmin();
+  loadUsersAdmin();
+  loadEpAnimeSelect();
+
+  // Sidebar navigation
+  document.querySelectorAll('.admin-sidebar a').forEach(link => {
+    link.addEventListener('click', function() {
+      document.querySelectorAll('.admin-sidebar a').forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('sec-' + this.dataset.section).classList.add('active');
+      if (this.dataset.section === 'anime') loadAnimeTable();
+      if (this.dataset.section === 'comments') loadCommentsAdmin();
+      if (this.dataset.section === 'votes') loadVotesAdmin();
+      if (this.dataset.section === 'users') loadUsersAdmin();
+    });
+  });
+}
+
+async function loadDashboard() {
+  try {
+    const [animeSnap, usersSnap, commentsSnap, episodesSnap] = await Promise.all([
+      db.collection('anime').get(),
+      db.collection('users').get(),
+      db.collection('comments').get(),
+      db.collection('episodes').get()
+    ]);
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${animeSnap.size}</div><div class="stat-label">Phim</div></div>
+      <div class="stat-card"><div class="stat-num">${episodesSnap.size}</div><div class="stat-label">Tập phim</div></div>
+      <div class="stat-card"><div class="stat-num">${usersSnap.size}</div><div class="stat-label">Người dùng</div></div>
+      <div class="stat-card"><div class="stat-num">${commentsSnap.size}</div><div class="stat-label">Bình luận</div></div>`;
+  } catch(e) { console.error(e); }
+}
+
+// ===== ANIME MANAGEMENT =====
+function showAddAnimeForm() {
+  document.getElementById('animeForm').style.display = 'block';
+  document.getElementById('animeId').value = '';
+  ['animeName','animeNameEn','animeDesc','animeThumb'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('animeDuration').value = '20';
+  document.getElementById('animeTotalEp').value = '52';
+  document.getElementById('animeStatus').value = 'ongoing';
+  document.getElementById('animeSchedule').value = '';
+}
+
+async function loadAnimeTable() {
+  try {
+    const snapshot = await db.collection('anime').orderBy('name').get();
+    let html = '';
+    snapshot.forEach(doc => {
+      const a = doc.data();
+      html += `<tr>
+        <td><strong>${escapeHtml(a.name || '')}</strong><br><small style="color:#888;">${escapeHtml(a.nameEn || '')}</small></td>
+        <td>${escapeHtml(a.genre || '')}</td>
+        <td>${a.currentEp || 0}/${a.totalEp || 0}</td>
+        <td><span class="badge-${a.status === 'completed' ? 'full' : 'ongoing'}">${a.status === 'completed' ? 'Full' : 'Đang chiếu'}</span></td>
+        <td>
+          <button class="btn-sm btn-edit" onclick="editAnime('${doc.id}')">✏</button>
+          <button class="btn-sm btn-del" onclick="deleteAnime('${doc.id}')">🗑</button>
+        </td></tr>`;
+    });
+    document.getElementById('animeTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có phim nào</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+async function saveAnime() {
+  const id = document.getElementById('animeId').value;
+  const data = {
+    name: document.getElementById('animeName').value,
+    nameEn: document.getElementById('animeNameEn').value,
+    genre: document.getElementById('animeGenre').value,
+    description: document.getElementById('animeDesc').value,
+    thumbnail: document.getElementById('animeThumb').value,
+    duration: parseInt(document.getElementById('animeDuration').value) || 20,
+    totalEp: parseInt(document.getElementById('animeTotalEp').value) || 52,
+    status: document.getElementById('animeStatus').value,
+    schedule: document.getElementById('animeSchedule').value,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    if (id) {
+      await db.collection('anime').doc(id).update(data);
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      data.currentEp = 0;
+      await db.collection('anime').add(data);
+    }
+    showToast('✅ Đã lưu phim');
+    document.getElementById('animeForm').style.display = 'none';
+    loadAnimeTable();
+  } catch(e) { showToast('❌ Lỗi lưu'); }
+}
+
+async function editAnime(id) {
+  try {
+    const doc = await db.collection('anime').doc(id).get();
+    if (!doc.exists) return;
+    const a = doc.data();
+    document.getElementById('animeId').value = id;
+    document.getElementById('animeName').value = a.name || '';
+    document.getElementById('animeNameEn').value = a.nameEn || '';
+    document.getElementById('animeGenre').value = a.genre || 'Tu Tiên';
+    document.getElementById('animeDesc').value = a.description || '';
+    document.getElementById('animeThumb').value = a.thumbnail || '';
+    document.getElementById('animeDuration').value = a.duration || 20;
+    document.getElementById('animeTotalEp').value = a.totalEp || 52;
+    document.getElementById('animeStatus').value = a.status || 'ongoing';
+    document.getElementById('animeSchedule').value = a.schedule || '';
+    document.getElementById('animeForm').style.display = 'block';
+  } catch(e) { showToast('❌ Lỗi'); }
+}
+
+async function deleteAnime(id) {
+  if (!confirm('Xóa phim này và tất cả tập, bình luận, vote liên quan?')) return;
+  try {
+    await db.collection('anime').doc(id).delete();
+    showToast('✅ Đã xóa phim');
+    loadAnimeTable();
+  } catch(e) { showToast('❌ Lỗi xóa'); }
+}
+
+// ===== EPISODES =====
+async function loadEpAnimeSelect() {
+  try {
+    const snapshot = await db.collection('anime').orderBy('name').get();
+    let html = '<option value="">-- Chọn phim --</option>';
+    snapshot.forEach(doc => { html += `<option value="${doc.id}">${escapeHtml(doc.data().name || '')}</option>`; });
+    document.getElementById('epAnimeSelect').innerHTML = html;
+  } catch(e) { console.error(e); }
+}
+
+async function addEpisodeAdmin() {
+  const animeId = document.getElementById('epAnimeSelect').value;
+  if (!animeId) { showToast('❌ Chọn phim trước'); return; }
+  const epNum = parseInt(document.getElementById('epNumber').value);
+  const type = document.getElementById('epType').value;
+  const url = document.getElementById('epUrl').value;
+  if (!epNum || !url) { showToast('❌ Nhập đầy đủ thông tin'); return; }
+  try {
+    await db.collection('episodes').add({
+      animeId, episodeNumber: epNum, type, url,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Update anime current episode count
+    const animeDoc = await db.collection('anime').doc(animeId).get();
+    const currentEp = Math.max(animeDoc.data().currentEp || 0, epNum);
+    await db.collection('anime').doc(animeId).update({ currentEp });
+    showToast('✅ Đã thêm tập');
+    document.getElementById('epNumber').value = epNum + 1;
+    document.getElementById('epUrl').value = '';
+    loadEpisodesAdmin();
+  } catch(e) { showToast('❌ Lỗi thêm tập'); }
+}
+
+async function loadEpisodesAdmin() {
+  const animeId = document.getElementById('epAnimeSelect').value;
+  const container = document.getElementById('episodesAdminList');
+  if (!animeId) { container.innerHTML = '<p>Chọn phim để xem danh sách tập</p>'; return; }
+  try {
+    let query = db.collection('episodes').where('animeId', '==', animeId);
+    if (currentEpFilter !== 'all') query = query.where('type', '==', currentEpFilter);
+    const snapshot = await query.orderBy('episodeNumber', 'asc').get();
+    let html = '';
+    snapshot.forEach(doc => {
+      const ep = doc.data();
+      html += `<div class="episode-row">
+        <span><strong>Tập ${ep.episodeNumber}</strong></span>
+        <span class="ep-type-badge ${ep.type}" style="padding:2px 8px;border-radius:3px;font-size:11px;background:${ep.type==='vietsub'?'#27ae60':'#e67e22'};color:#fff;">${ep.type==='vietsub'?'VietSub':'Thuyết Minh'}</span>
+        <span style="flex:1;font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(ep.url || '')}</span>
+        <button class="btn-sm btn-del" onclick="deleteEpisodeAdmin('${doc.id}')">🗑</button>
+      </div>`;
+    });
+    container.innerHTML = html || '<p>Chưa có tập nào</p>';
+  } catch(e) { console.error(e); }
+}
+
+async function deleteEpisodeAdmin(epId) {
+  if (!confirm('Xóa tập này?')) return;
+  try { await db.collection('episodes').doc(epId).delete(); showToast('✅ Đã xóa'); loadEpisodesAdmin(); }
+  catch(e) { showToast('❌ Lỗi'); }
+}
+
+function filterEpisodesAdmin(type, btn) {
+  currentEpFilter = type;
+  document.querySelectorAll('#sec-episodes .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadEpisodesAdmin();
+}
+
+// ===== COMMENTS =====
+async function loadCommentsAdmin() {
+  try {
+    const snapshot = await db.collection('comments').orderBy('createdAt', 'desc').limit(100).get();
+    let html = '';
+    for (const doc of snapshot.docs) {
+      const c = doc.data();
+      let animeName = c.animeId;
+      try { const a = await db.collection('anime').doc(c.animeId).get(); if (a.exists) animeName = a.data().name; } catch(e) {}
+      html += `<tr>
+        <td>${escapeHtml(c.userName || '?')}</td>
+        <td>${escapeHtml(animeName)}</td>
+        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.text || '')}</td>
+        <td>${formatTime(c.createdAt)}</td>
+        <td><button class="btn-sm btn-del" onclick="deleteComment('${doc.id}');loadCommentsAdmin();">🗑</button></td>
+      </tr>`;
+    }
+    document.getElementById('commentsTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có bình luận</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+// ===== VOTES =====
+async function loadVotesAdmin() {
+  try {
+    const animeSnap = await db.collection('anime').orderBy('name').get();
+    let html = '';
+    for (const animeDoc of animeSnap.docs) {
+      const anime = animeDoc.data();
+      const voteSnap = await db.collection('votes').where('animeId', '==', animeDoc.id).get();
+      let totalStars = 0, count = 0;
+      voteSnap.forEach(v => { totalStars += v.data().stars; count++; });
+      const avg = count > 0 ? (totalStars / count).toFixed(1) : '0.0';
+      const displayCount = anime.voteCountOverride !== undefined ? anime.voteCountOverride : count;
+      html += `<tr>
+        <td>${escapeHtml(anime.name || '')}</td>
+        <td>⭐ ${avg}</td>
+        <td id="voteCount-${animeDoc.id}">${displayCount}</td>
+        <td>
+          <input type="number" id="voteInput-${animeDoc.id}" value="${displayCount}" style="width:70px;padding:4px 8px;background:#0d0d0d;border:1px solid #333;color:#fff;border-radius:4px;">
+          <button class="btn-sm btn-edit" onclick="adminUpdateVoteCount('${animeDoc.id}',document.getElementById('voteInput-${animeDoc.id}').value)">💾</button>
+        </td></tr>`;
+    }
+    document.getElementById('votesTableBody').innerHTML = html || '<tr><td colspan="4">Chưa có phim</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+// Override adminUpdateVoteCount from app.js
+async function adminUpdateVoteCount(animeId, newCount) {
+  if (!isAdmin) { showToast('❌ Chỉ admin mới sửa được'); return; }
+  try {
+    await db.collection('anime').doc(animeId).update({ voteCountOverride: parseInt(newCount) });
+    showToast('✅ Đã cập nhật số lượt vote (sao không đổi)');
+    document.getElementById('voteCount-' + animeId).textContent = newCount;
+  } catch(e) { showToast('❌ Lỗi'); }
+}
+
+// ===== USERS =====
+async function loadUsersAdmin() {
+  try {
+    const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+    let html = '';
+    snapshot.forEach(doc => {
+      const u = doc.data();
+      html += `<tr>
+        <td>${escapeHtml(u.email || '')}</td>
+        <td>${escapeHtml(u.displayName || '')}</td>
+        <td>${escapeHtml(u.phone || '')}</td>
+        <td><span style="color:${u.role==='admin'?'#f5a623':'#888'}">${u.role || 'user'}</span></td>
+        <td>${formatTime(u.createdAt)}</td></tr>`;
+    });
+    document.getElementById('usersTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có người dùng</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+function handleAdminLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('adminEmail').value;
+  const password = document.getElementById('adminPassword').value;
+  loginAdmin(email, password);
+}
+
+// Auto-check if already logged in as admin
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    if (userDoc.exists && userDoc.data().role === 'admin') {
+      isAdmin = true;
+      loadAdminPanel();
+    }
+  }
+});
+</script>
+</body>
+</html>
