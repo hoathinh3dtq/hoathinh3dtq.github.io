@@ -3,12 +3,12 @@
 // To enable: create project at https://console.firebase.google.com and paste config below
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD-PLACEHOLDER-KEY",
-  authDomain: "hh3dtq.firebaseapp.com",
-  projectId: "hh3dtq",
-  storageBucket: "hh3dtq.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:abc123def456"
+  apiKey: "AIzaSyDyUiBMWOQDX-PpYJ1DYqsSOsc5UDOXI8I",
+  authDomain: "hh3dtq-2026.firebaseapp.com",
+  projectId: "hh3dtq-2026",
+  storageBucket: "hh3dtq-2026.firebasestorage.app",
+  messagingSenderId: "920969290447",
+  appId: "1:920969290447:web:143ac64bb4179f4e040dba"
 };
 
 // Auto-detect Firebase availability
@@ -42,28 +42,28 @@ let isAdmin = false;
 
 // ========== HARDCODED ANIME DATA (demo mode fallback) ==========
 var HARDCODED_ANIME = {
-  "tien-nghich": { name: "Tiên Nghịch", nameEn: "Xian Ni", genre: "Tu Tiên", description: "Hành trình tu tiên đầy gian nan và thử thách của Vương Lâm - một thiếu niên bình thường nhưng mang trong mình nghịch lực phi thường, dám nghịch thiên cải mệnh.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/tien-nghich-300x450.webp", duration: 25, totalEp: 180, status: "ongoing", currentEp: 155, rating: 4.5, voteCount: 2847 },
-  "muc-than-ky": { name: "Mục Thần Ký", nameEn: "Mu Shen Ji", genre: "Huyền Huyễn", description: "Tần Mục - một thiếu niên được lão Mục Thần thu nhận, bắt đầu hành trình tu luyện đầy kỳ diệu.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/muc-than-ky-2-300x450.webp", duration: 20, totalEp: 52, status: "ongoing", currentEp: 42, rating: 4.5, voteCount: 1923 },
-  "dau-pha-thuong-khung": { name: "Đấu Phá Thương Khung", nameEn: "Fights Break Sphere", genre: "Huyền Huyễn", description: "Tiêu Viêm - thiên tài tu luyện một thời bỗng chốc mất hết thực lực. Nhưng định mệnh đã sắp đặt để chàng trai trẻ gặp được Dược Lão...", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/dau-pha-thuong-khung-phan-5-gia-nam-hoc-vien-1-1-300x450.webp", duration: 22, totalEp: 156, status: "ongoing", currentEp: 125, rating: 4.1, voteCount: 3156 },
-  "phan-nhan-tu-tien": { name: "Phàm Nhân Tu Tiên", nameEn: "Fan Ren Xiu Xian Zhuan", genre: "Tu Tiên", description: "Hàn Lập - một phàm nhân bình thường, nhờ cơ duyên bước vào con đường tu tiên đầy nguy hiểm.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/pham-nhan-tu-tien-phan-4-300x450.webp", duration: 20, totalEp: 140, status: "ongoing", currentEp: 128, rating: 4.4, voteCount: 2645 },
-  "the-gioi-hoan-my": { name: "Thế Giới Hoàn Mỹ", nameEn: "Perfect World", genre: "Tiên Hiệp", description: "Thạch Hạo - thiếu niên được sinh ra trong một thế giới hoàn mỹ, bắt đầu hành trình tu luyện từ những điều nhỏ nhất.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/The-Gioi-Hoan-My-poster-4-300x450.webp", duration: 22, totalEp: 210, status: "ongoing", currentEp: 189, rating: 4.5, voteCount: 2310 },
-  "gia-thien": { name: "Già Thiên", nameEn: "Zhe Tian", genre: "Tu Tiên", description: "Một thế giới nơi tu sĩ che cả bầu trời - Diệp Phàm bắt đầu hành trình từ một người phàm.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Gia-Thien-300x450.webp", duration: 20, totalEp: 120, status: "ongoing", currentEp: 98, rating: 4.6, voteCount: 1890 },
-  "dau-la-dai-luc-2": { name: "Đấu La Đại Lục 2", nameEn: "Douluo Dalu 2", genre: "Huyền Huyễn", description: "Tiếp nối câu chuyện Đấu La Đại Lục, với nhân vật chính mới và những cuộc phiêu lưu mới.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Dau-La-Dai-Luc-2-Tuyet-The-Duong-Mon-1-300x450.webp", duration: 20, totalEp: 104, status: "ongoing", currentEp: 88, rating: 4.3, voteCount: 2789 },
-  "thon-phe-tinh-khong": { name: "Thôn Phệ Tinh Không", nameEn: "Swallowed Star", genre: "Khoa Huyễn", description: "La Phong - một thiếu niên bình thường sống trong thời đại khoa học kỹ thuật và võ học cùng tồn tại.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Thon-Phe-Tinh-Khong-300x450.webp", duration: 22, totalEp: 180, status: "ongoing", currentEp: 156, rating: 4.5, voteCount: 2045 },
-  "thuong-nguyen-do": { name: "Thương Nguyên Đồ", nameEn: "Cang Yuan Tu", genre: "Tu Tiên", description: "Mạnh Xuyên - một thiếu niên mang trong mình giấc mơ trở thành cường giả mạnh nhất.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/photo_2026-03-13_09-30-47-300x450.webp", duration: 20, totalEp: 78, status: "ongoing", currentEp: 65, rating: 4.4, voteCount: 1567 },
-  "van-tham-bat-tri-mong": { name: "Vân Thâm Bất Tri Mộng", nameEn: "Veiled Dreams", genre: "Cổ Trang", description: "Một câu chuyện huyền bí về những giấc mơ và hiện thực đan xen.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2025/07/Van-Tham-Bat-Tri-Mong-1-300x450.webp", duration: 18, totalEp: 16, status: "ongoing", currentEp: 5, rating: 4.5, voteCount: 678 },
-  "tru-tien": { name: "Tru Tiên", nameEn: "Zhu Xian", genre: "Tiên Hiệp", description: "Trương Tiểu Phàm - một thiếu niên bình thường vô tình bước vào thế giới tu chân đầy biến động.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Tru-Tien-Phan-3-300x450.jpg", duration: 22, totalEp: 104, status: "ongoing", currentEp: 78, rating: 4.3, voteCount: 2145 },
-  "kiem-lai": { name: "Kiếm Lai", nameEn: "Sword of Coming", genre: "Kiếm Hiệp", description: "Trần Bình An - một thiếu niên bình thường ở trấn nhỏ, bắt đầu con đường kiếm đạo đầy chông gai.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Gia-Thien-300x450.webp", duration: 20, totalEp: 52, status: "ongoing", currentEp: 45, rating: 4.4, voteCount: 1234 },
-  "than-mu": { name: "Thần Mộ", nameEn: "Shen Mu", genre: "Huyền Huyễn", description: "Thần Mộ - nơi an nghỉ của chư thần, một thiếu niên tỉnh dậy từ nấm mồ thần...", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Thai-Co-Than-Ton-300x450.png", duration: 22, totalEp: 52, status: "ongoing", currentEp: 34, rating: 4.2, voteCount: 987 },
-  "vo-luyen-dinh-phong": { name: "Võ Luyện Đỉnh Phong", nameEn: "Martial Peak", genre: "Huyền Huyễn", description: "Dương Khai - một thiếu niên với võ đạo chi tâm kiên định, từng bước leo lên đỉnh cao.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Vo-Than-Chua-Te-300x450.webp", duration: 18, totalEp: 156, status: "ongoing", currentEp: 112, rating: 4.1, voteCount: 2345 },
-  "nguyen-ton": { name: "Nguyên Tôn", nameEn: "Yuan Zun", genre: "Huyền Huyễn", description: "Chu Nguyên - thiếu niên mang trong mình oán long chi khí, bắt đầu hành trình trở thành Nguyên Tôn.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Than-Y-Co-Dai-O-Do-Thi-300x450.webp", duration: 20, totalEp: 78, status: "ongoing", currentEp: 56, rating: 4.3, voteCount: 1678 },
-  "vo-dong-can-khon": { name: "Võ Động Càn Khôn", nameEn: "Wu Dong Qian Kun", genre: "Huyền Huyễn", description: "Lâm Động - từ một thiếu niên yếu đuối trở thành cường giả chấn động càn khôn.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Tuyet-The-Chien-Hon-3D-300x450.webp", duration: 20, totalEp: 104, status: "ongoing", currentEp: 89, rating: 4.2, voteCount: 1890 },
-  "dai-chua-te": { name: "Đại Chúa Tể", nameEn: "The Great Ruler", genre: "Huyền Huyễn", description: "Mục Trần - thiếu niên với linh mạch bị phong ấn, bắt đầu con đường trở thành Đại Chúa Tể.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Dai-Chua-Te-2-300x450.webp", duration: 22, totalEp: 78, status: "ongoing", currentEp: 67, rating: 4.1, voteCount: 1456 },
-  "nhat-the-doc-ton": { name: "Nhất Thế Độc Tôn", nameEn: "Peerless Battle Spirit", genre: "Huyền Huyễn", description: "Thiếu niên với chiến hồn vô song, bước lên đỉnh cao võ đạo.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Nghich-Thien-Chi-Ton-300x450.webp", duration: 18, totalEp: 52, status: "ongoing", currentEp: 45, rating: 4.0, voteCount: 1234 },
-  "linh-kiem-ton": { name: "Linh Kiếm Tôn", nameEn: "Spirit Sword Sovereign", genre: "Kiếm Hiệp", description: "Kiếm đạo đỉnh phong - hành trình của một linh kiếm tôn giả.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Vo-Thuong-Than-De-300x450.webp", duration: 15, totalEp: 300, status: "ongoing", currentEp: 234, rating: 3.9, voteCount: 3456 },
-  "van-co-than-de": { name: "Vạn Cổ Thần Đế", nameEn: "Wan Gu Shen Di", genre: "Huyền Huyễn", description: "Một vị thần đế vạn cổ tái sinh, bắt đầu lại từ con số không.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Vo-Thuong-Than-De-300x450.webp", duration: 18, totalEp: 120, status: "ongoing", currentEp: 89, rating: 4.0, voteCount: 2100 },
-  "nghich-thien-ta-than": { name: "Nghịch Thiên Tà Thần", nameEn: "Against the Gods", genre: "Huyền Huyễn", description: "Nghịch thiên giả - kẻ dám chống lại cả thiên đạo.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Nghich-Thien-Ta-Than-3D-300x450.webp", duration: 15, totalEp: 200, status: "ongoing", currentEp: 156, rating: 4.2, voteCount: 2890 },
-  "van-gioi-doc-ton": { name: "Vạn Giới Độc Tôn", nameEn: "Myriad Realms Supreme", genre: "Huyền Huyễn", description: "Độc tôn vạn giới - kẻ mạnh nhất trong muôn vàn thế giới.", thumbnail: "https://hoathinh3d.ee/wp-content/uploads/2024/11/Van-Gioi-Doc-Ton-300x450.webp", duration: 18, totalEp: 104, status: "ongoing", currentEp: 67, rating: 4.0, voteCount: 1567 }
+  "tien-nghich": { name: "Tiên Nghịch", nameEn: "Xian Ni", genre: "Tu Tiên", description: "Hành trình tu tiên đầy gian nan và thử thách của Vương Lâm - một thiếu niên bình thường nhưng mang trong mình nghịch lực phi thường, dám nghịch thiên cải mệnh.", thumbnail: "images/tien-nghich-300x450.webp", duration: 25, totalEp: 180, status: "ongoing", currentEp: 155, rating: 4.5, voteCount: 2847 },
+  "muc-than-ky": { name: "Mục Thần Ký", nameEn: "Mu Shen Ji", genre: "Huyền Huyễn", description: "Tần Mục - một thiếu niên được lão Mục Thần thu nhận, bắt đầu hành trình tu luyện đầy kỳ diệu.", thumbnail: "images/muc-than-ky-2-300x450.webp", duration: 20, totalEp: 52, status: "ongoing", currentEp: 42, rating: 4.5, voteCount: 1923 },
+  "dau-pha-thuong-khung": { name: "Đấu Phá Thương Khung", nameEn: "Fights Break Sphere", genre: "Huyền Huyễn", description: "Tiêu Viêm - thiên tài tu luyện một thời bỗng chốc mất hết thực lực. Nhưng định mệnh đã sắp đặt để chàng trai trẻ gặp được Dược Lão...", thumbnail: "images/dau-pha-thuong-khung-phan-5-gia-nam-hoc-vien-1-1-300x450.webp", duration: 22, totalEp: 156, status: "ongoing", currentEp: 125, rating: 4.1, voteCount: 3156 },
+  "phan-nhan-tu-tien": { name: "Phàm Nhân Tu Tiên", nameEn: "Fan Ren Xiu Xian Zhuan", genre: "Tu Tiên", description: "Hàn Lập - một phàm nhân bình thường, nhờ cơ duyên bước vào con đường tu tiên đầy nguy hiểm.", thumbnail: "images/pham-nhan-tu-tien-phan-4-300x450.webp", duration: 20, totalEp: 140, status: "ongoing", currentEp: 128, rating: 4.4, voteCount: 2645 },
+  "the-gioi-hoan-my": { name: "Thế Giới Hoàn Mỹ", nameEn: "Perfect World", genre: "Tiên Hiệp", description: "Thạch Hạo - thiếu niên được sinh ra trong một thế giới hoàn mỹ, bắt đầu hành trình tu luyện từ những điều nhỏ nhất.", thumbnail: "images/The-Gioi-Hoan-My-poster-4-300x450.webp", duration: 22, totalEp: 210, status: "ongoing", currentEp: 189, rating: 4.5, voteCount: 2310 },
+  "gia-thien": { name: "Già Thiên", nameEn: "Zhe Tian", genre: "Tu Tiên", description: "Một thế giới nơi tu sĩ che cả bầu trời - Diệp Phàm bắt đầu hành trình từ một người phàm.", thumbnail: "images/Gia-Thien-300x450.webp", duration: 20, totalEp: 120, status: "ongoing", currentEp: 98, rating: 4.6, voteCount: 1890 },
+  "dau-la-dai-luc-2": { name: "Đấu La Đại Lục 2", nameEn: "Douluo Dalu 2", genre: "Huyền Huyễn", description: "Tiếp nối câu chuyện Đấu La Đại Lục, với nhân vật chính mới và những cuộc phiêu lưu mới.", thumbnail: "images/Dau-La-Dai-Luc-2-Tuyet-The-Duong-Mon-1-300x450.webp", duration: 20, totalEp: 104, status: "ongoing", currentEp: 88, rating: 4.3, voteCount: 2789 },
+  "thon-phe-tinh-khong": { name: "Thôn Phệ Tinh Không", nameEn: "Swallowed Star", genre: "Khoa Huyễn", description: "La Phong - một thiếu niên bình thường sống trong thời đại khoa học kỹ thuật và võ học cùng tồn tại.", thumbnail: "images/Thon-Phe-Tinh-Khong-300x450.webp", duration: 22, totalEp: 180, status: "ongoing", currentEp: 156, rating: 4.5, voteCount: 2045 },
+  "thuong-nguyen-do": { name: "Thương Nguyên Đồ", nameEn: "Cang Yuan Tu", genre: "Tu Tiên", description: "Mạnh Xuyên - một thiếu niên mang trong mình giấc mơ trở thành cường giả mạnh nhất.", thumbnail: "images/photo_2026-03-13_09-30-47-300x450.webp", duration: 20, totalEp: 78, status: "ongoing", currentEp: 65, rating: 4.4, voteCount: 1567 },
+  "van-tham-bat-tri-mong": { name: "Vân Thâm Bất Tri Mộng", nameEn: "Veiled Dreams", genre: "Cổ Trang", description: "Một câu chuyện huyền bí về những giấc mơ và hiện thực đan xen.", thumbnail: "images/Van-Tham-Bat-Tri-Mong-1-300x450.webp", duration: 18, totalEp: 16, status: "ongoing", currentEp: 5, rating: 4.5, voteCount: 678 },
+  "tru-tien": { name: "Tru Tiên", nameEn: "Zhu Xian", genre: "Tiên Hiệp", description: "Trương Tiểu Phàm - một thiếu niên bình thường vô tình bước vào thế giới tu chân đầy biến động.", thumbnail: "images/Tru-Tien-Phan-3-300x450.jpg", duration: 22, totalEp: 104, status: "ongoing", currentEp: 78, rating: 4.3, voteCount: 2145 },
+  "kiem-lai": { name: "Kiếm Lai", nameEn: "Sword of Coming", genre: "Kiếm Hiệp", description: "Trần Bình An - một thiếu niên bình thường ở trấn nhỏ, bắt đầu con đường kiếm đạo đầy chông gai.", thumbnail: "images/Gia-Thien-300x450.webp", duration: 20, totalEp: 52, status: "ongoing", currentEp: 45, rating: 4.4, voteCount: 1234 },
+  "than-mu": { name: "Thần Mộ", nameEn: "Shen Mu", genre: "Huyền Huyễn", description: "Thần Mộ - nơi an nghỉ của chư thần, một thiếu niên tỉnh dậy từ nấm mồ thần...", thumbnail: "images/Thai-Co-Than-Ton-300x450.png", duration: 22, totalEp: 52, status: "ongoing", currentEp: 34, rating: 4.2, voteCount: 987 },
+  "vo-luyen-dinh-phong": { name: "Võ Luyện Đỉnh Phong", nameEn: "Martial Peak", genre: "Huyền Huyễn", description: "Dương Khai - một thiếu niên với võ đạo chi tâm kiên định, từng bước leo lên đỉnh cao.", thumbnail: "images/Vo-Than-Chua-Te-300x450.webp", duration: 18, totalEp: 156, status: "ongoing", currentEp: 112, rating: 4.1, voteCount: 2345 },
+  "nguyen-ton": { name: "Nguyên Tôn", nameEn: "Yuan Zun", genre: "Huyền Huyễn", description: "Chu Nguyên - thiếu niên mang trong mình oán long chi khí, bắt đầu hành trình trở thành Nguyên Tôn.", thumbnail: "images/Than-Y-Co-Dai-O-Do-Thi-300x450.webp", duration: 20, totalEp: 78, status: "ongoing", currentEp: 56, rating: 4.3, voteCount: 1678 },
+  "vo-dong-can-khon": { name: "Võ Động Càn Khôn", nameEn: "Wu Dong Qian Kun", genre: "Huyền Huyễn", description: "Lâm Động - từ một thiếu niên yếu đuối trở thành cường giả chấn động càn khôn.", thumbnail: "images/Tuyet-The-Chien-Hon-3D-300x450.webp", duration: 20, totalEp: 104, status: "ongoing", currentEp: 89, rating: 4.2, voteCount: 1890 },
+  "dai-chua-te": { name: "Đại Chúa Tể", nameEn: "The Great Ruler", genre: "Huyền Huyễn", description: "Mục Trần - thiếu niên với linh mạch bị phong ấn, bắt đầu con đường trở thành Đại Chúa Tể.", thumbnail: "images/Dai-Chua-Te-2-300x450.webp", duration: 22, totalEp: 78, status: "ongoing", currentEp: 67, rating: 4.1, voteCount: 1456 },
+  "nhat-the-doc-ton": { name: "Nhất Thế Độc Tôn", nameEn: "Peerless Battle Spirit", genre: "Huyền Huyễn", description: "Thiếu niên với chiến hồn vô song, bước lên đỉnh cao võ đạo.", thumbnail: "images/Nghich-Thien-Chi-Ton-300x450.webp", duration: 18, totalEp: 52, status: "ongoing", currentEp: 45, rating: 4.0, voteCount: 1234 },
+  "linh-kiem-ton": { name: "Linh Kiếm Tôn", nameEn: "Spirit Sword Sovereign", genre: "Kiếm Hiệp", description: "Kiếm đạo đỉnh phong - hành trình của một linh kiếm tôn giả.", thumbnail: "images/Vo-Thuong-Than-De-300x450.webp", duration: 15, totalEp: 300, status: "ongoing", currentEp: 234, rating: 3.9, voteCount: 3456 },
+  "van-co-than-de": { name: "Vạn Cổ Thần Đế", nameEn: "Wan Gu Shen Di", genre: "Huyền Huyễn", description: "Một vị thần đế vạn cổ tái sinh, bắt đầu lại từ con số không.", thumbnail: "images/Vo-Thuong-Than-De-300x450.webp", duration: 18, totalEp: 120, status: "ongoing", currentEp: 89, rating: 4.0, voteCount: 2100 },
+  "nghich-thien-ta-than": { name: "Nghịch Thiên Tà Thần", nameEn: "Against the Gods", genre: "Huyền Huyễn", description: "Nghịch thiên giả - kẻ dám chống lại cả thiên đạo.", thumbnail: "images/Nghich-Thien-Ta-Than-3D-300x450.webp", duration: 15, totalEp: 200, status: "ongoing", currentEp: 156, rating: 4.2, voteCount: 2890 },
+  "van-gioi-doc-ton": { name: "Vạn Giới Độc Tôn", nameEn: "Myriad Realms Supreme", genre: "Huyền Huyễn", description: "Độc tôn vạn giới - kẻ mạnh nhất trong muôn vàn thế giới.", thumbnail: "images/Van-Gioi-Doc-Ton-300x450.webp", duration: 18, totalEp: 104, status: "ongoing", currentEp: 67, rating: 4.0, voteCount: 1567 }
 };
 
 // Helper: get anime data (Firebase first, then hardcoded fallback)
@@ -378,8 +378,12 @@ async function loadEpisodes(animeId, type) {
     const totalEp = anime ? anime.totalEp : 52;
     const currentEp = anime ? anime.currentEp : 26;
     var html = '<div class="episode-list">';
-    var limit = Math.min(currentEp, 30);
-    for (var i = 1; i <= limit; i++) {
+    var limit = currentEp;  // Show ALL available episodes, no hardcoded cap
+    var epPage = 1;
+    var epPerPage = 50;
+    var epStart = (epPage - 1) * epPerPage + 1;
+    var epEnd = Math.min(epPage * epPerPage, limit);
+    for (var i = epStart; i <= epEnd; i++) {
       var epType = i % 3 === 0 ? "thuyetminh" : "vietsub";
       html += '<div class="episode-item">' +
         '<span class="ep-num">Tập ' + i + '</span>' +
@@ -389,7 +393,7 @@ async function loadEpisodes(animeId, type) {
     }
     html += '</div>';
     if (!type || type === "all") {
-      html += '<p style="text-align:center;font-size:12px;color:#666;margin-top:12px;">Hiển thị demo ' + limit + '/' + totalEp + ' tập. <button onclick="showToast(\'⚠ Firebase chưa được cấu hình. Vui lòng liên hệ admin.\')" style="background:none;color:#f5a623;border:none;cursor:pointer;text-decoration:underline;font-family:inherit;">ℹ️ Tại sao?</button></p>';
+      html += '<p style="text-align:center;font-size:12px;color:#666;margin-top:12px;">Hiển thị ' + epStart + '-' + epEnd + ' / ' + totalEp + ' tập (đã có ' + limit + '). <button onclick="showToast(\'⚠ Firebase chưa được cấu hình. Vui lòng liên hệ admin.\')" style="background:none;color:#f5a623;border:none;cursor:pointer;text-decoration:underline;font-family:inherit;">ℹ️ Tại sao?</button></p>';
     }
     container.innerHTML = html;
     return;
