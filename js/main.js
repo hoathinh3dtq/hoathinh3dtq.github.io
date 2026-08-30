@@ -1,4 +1,4 @@
-/* === hh3dtq - Main JavaScript === */
+/* === HH3DTQ - Main JavaScript === */
 
 document.addEventListener('DOMContentLoaded', function() {
   // Login modal

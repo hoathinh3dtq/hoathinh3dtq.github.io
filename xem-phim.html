@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Xem Phim - hh3dtq</title>
+  <title>Xem Phim - HH3DTQ</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -53,8 +53,8 @@
   <div class="container">
     <div class="header-top">
       <div class="logo">
-        <a href="index.html"><span style="font-size:26px;font-weight:900;color:#f5a623;letter-spacing:2px;">hh3dtq</span></a>
-        <div class="logo-text"><strong>hh3dtq</strong>Phim Hoạt Hình 3D Trung Quốc 4K<br>Thuyết Minh VietSub</div>
+        <a href="index.html"><span style="font-size:26px;font-weight:900;color:#f5a623;letter-spacing:2px;">HH3DTQ</span></a>
+        <div class="logo-text"><strong>HH3DTQ</strong>Phim Hoạt Hình 3D Trung Quốc 4K<br>Thuyết Minh VietSub</div>
       </div>
       <div class="header-actions">
         <a href="javascript:void(0)">Lịch sử</a>
@@ -84,8 +84,8 @@
 <footer class="site-footer">
   <div class="container">
     <div class="footer-brand">
-      <a href="index.html"><span style="font-size:22px;font-weight:900;color:#f5a623;">hh3dtq</span></a>
-      <p class="copyright">Copyright © 2025 hh3dtq - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
+      <a href="index.html"><span style="font-size:22px;font-weight:900;color:#f5a623;">HH3DTQ</span></a>
+      <p class="copyright">Copyright © 2025 HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
       <p class="contact">📱 Contact Telegram: <a href="https://t.me/scanhihi" target="_blank" rel="noopener">@scanhihi</a></p>
     </div>
     <div class="footer-bottom"><p>hh3dtq - Kho phim hoạt hình 3D Trung Quốc chất lượng cao.</p></div>
@@ -136,19 +136,18 @@ const animeId = urlParams.get('id') || 'tien-nghich';
 let currentEpType = 'all';
 
 async function loadAnimeDetail() {
+  const container = document.getElementById('animeDetail');
+  container.innerHTML = '<div class="loading">⏳ Đang tải thông tin phim...</div>';
+
   try {
-    const doc = await db.collection('anime').doc(animeId).get();
-    const anime = doc.exists ? doc.data() : null;
+    const data = await getAnimeData(animeId);
 
-    // Fallback to hardcoded data if not in Firestore
-    const data = anime || {
-      name: 'Tiên Nghịch', nameEn: 'Xian Ni', genre: 'Tu Tiên',
-      description: 'Hành trình tu tiên đầy gian nan và thử thách...',
-      thumbnail: 'https://hoathinh3d.ee/wp-content/uploads/2024/11/tien-nghich-300x450.webp',
-      duration: 25, totalEp: 180, status: 'ongoing', currentEp: 155
-    };
+    if (!data) {
+      container.innerHTML = '<div class="error" style="text-align:center;padding:50px;"><h2>🔍 Không tìm thấy phim</h2><p style="color:#888;margin:10px 0;">Series "<strong>' + escapeHtml(animeId) + '</strong>" không tồn tại trong cơ sở dữ liệu.</p><p style="color:#666;font-size:13px;">Kiểm tra lại URL hoặc liên hệ admin qua Telegram: <a href="https://t.me/scanhihi" style="color:#f5a623;">@scanhihi</a></p><a href="index.html" style="display:inline-block;margin-top:15px;background:#f5a623;color:#000;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;">🏠 Về trang chủ</a> <button onclick="loadAnimeDetail()" style="display:inline-block;margin-top:15px;margin-left:10px;background:#1a1a1a;color:#f5a623;border:1px solid #333;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button></div>';
+      return;
+    }
 
-    document.getElementById('animeDetail').innerHTML = `
+    container.innerHTML = `
       <div class="anime-detail">
         <div class="anime-poster">
           <img src="${data.thumbnail || ''}" alt="${escapeHtml(data.name || '')}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 450%22><rect fill=%22%23111%22 width=%22300%22 height=%22450%22/><text fill=%22%23555%22 x=%22150%22 y=%22225%22 text-anchor=%22middle%22 font-size=%2220%22>No Image</text></svg>'">
@@ -192,8 +191,8 @@ async function loadAnimeDetail() {
     loadComments(animeId);
     loadVotes(animeId);
   } catch(e) {
-    document.getElementById('animeDetail').innerHTML = '<div class="error">❌ Lỗi tải phim. Vui lòng thử lại.</div>';
-    console.error(e);
+    container.innerHTML = '<div class="error" style="text-align:center;padding:50px;"><h2>⚠ Lỗi tải phim</h2><p style="color:#888;margin:10px 0;">Chi tiết lỗi: ' + escapeHtml(e.message || String(e)) + '</p><button onclick="loadAnimeDetail()" style="margin-top:10px;background:#f5a623;color:#000;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button> <a href="index.html" style="display:inline-block;margin-top:10px;margin-left:10px;color:#888;text-decoration:underline;">🏠 Về trang chủ</a></div>';
+    console.error('[HH3DTQ] loadAnimeDetail error:', e);
   }
 }
 
