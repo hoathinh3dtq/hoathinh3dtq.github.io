@@ -212,24 +212,17 @@ async function loginAdmin(email, password) {
   try {
     await auth.signInWithEmailAndPassword(email, password);
     const uid = auth.currentUser.uid;
-    // Ensure admin role before checking
-    const userDoc = await db.collection("users").doc(uid).get();
-    let role = userDoc.exists ? userDoc.data().role : null;
-    if (role !== "admin") {
-      if (email === ADMIN_EMAIL) {
-        // Designated admin — always promote
-        await db.collection("users").doc(uid).set({ email: email, role: "admin" }, { merge: true });
-        role = "admin";
-      } else {
-        // If no admin exists yet, promote this user
-        const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
-        if (adminCheck.empty) {
-          await db.collection("users").doc(uid).update({ role: "admin" });
-          role = "admin";
-        }
-      }
+    // Designated admin email — always allow, skip Firestore
+    if (email === ADMIN_EMAIL) {
+      try { await db.collection("users").doc(uid).set({ email: email, role: "admin" }, { merge: true }); } catch(e) {}
+      closeModal("adminLoginModal");
+      showToast("✅ Admin đăng nhập thành công!");
+      if (typeof loadAdminPanel === "function") loadAdminPanel();
+      return true;
     }
-    if (role !== "admin") {
+    // For other users, check Firestore role
+    const userDoc = await db.collection("users").doc(uid).get();
+    if (!userDoc.exists || userDoc.data().role !== "admin") {
       await auth.signOut();
       showToast("❌ Không phải admin!");
       return false;
