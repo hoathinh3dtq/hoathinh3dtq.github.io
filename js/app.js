@@ -38,6 +38,7 @@ try {
 
 // No hardcoded admin emails — first user to register becomes the sole admin
 // To add more admins, use the Admin Panel → Users → promote
+const ADMIN_EMAIL = "ngoctan110499@gmail.com";
 
 let currentUser = null;
 let isAdmin = false;
@@ -88,12 +89,17 @@ if (FIREBASE_READY && auth) {
       try {
         const userDoc = await db.collection("users").doc(user.uid).get();
         isAdmin = userDoc.exists && userDoc.data().role === "admin";
-        // Auto-promote: if no admin exists yet, this user becomes admin
+        // Auto-promote: designated admin email OR if no admin exists yet
         if (!isAdmin) {
-          const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
-          if (adminCheck.empty) {
-            await db.collection("users").doc(user.uid).update({ role: "admin" });
+          if (user.email === ADMIN_EMAIL) {
+            await db.collection("users").doc(user.uid).set({ role: "admin", email: user.email }, { merge: true });
             isAdmin = true;
+          } else {
+            const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
+            if (adminCheck.empty) {
+              await db.collection("users").doc(user.uid).update({ role: "admin" });
+              isAdmin = true;
+            }
           }
         }
       } catch(e) { isAdmin = false; }
@@ -145,10 +151,14 @@ async function registerUser(email, password, displayName, phone) {
     try {
       // First user to register becomes the sole admin
       let role = "user";
-      try {
-        const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
-        if (adminCheck.empty) role = "admin";
-      } catch(e) { /* if query fails, default to user */ }
+      if (email === ADMIN_EMAIL) {
+        role = "admin";
+      } else {
+        try {
+          const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
+          if (adminCheck.empty) role = "admin";
+        } catch(e) { /* if query fails, default to user */ }
+      }
       await db.collection("users").doc(cred.user.uid).set({
         email, displayName, role: role,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
