@@ -380,11 +380,12 @@
 
   window.saveAnime = async function () {
     var id = document.getElementById('animeId').value;
+    var slug = document.getElementById('animeSlug').value || id;
     var data = {
       name: document.getElementById('animeName').value,
       nameEn: document.getElementById('animeNameEn').value,
       titleAlt: document.getElementById('animeTitleAlt').value,
-      slug: document.getElementById('animeSlug').value || id,
+      slug: slug,
       description: document.getElementById('animeDesc').value,
       genre: document.getElementById('animeGenre').value,
       country: document.getElementById('animeCountry').value || 'Trung Quốc',
@@ -404,9 +405,30 @@
       } else {
         data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         data.currentEp = 0;
-        var docId = data.slug || data.name.toLowerCase().replace(/\s+/g, '-');
+        var docId = slug || data.name.toLowerCase().replace(/\s+/g, '-');
         await db.collection('anime').doc(docId).set(data);
       }
+      // Also save to series/{slug} for frontend canonical metadata
+      var seriesMeta = {
+        title: data.name,
+        other_name: data.nameEn || data.titleAlt || '',
+        slug: slug,
+        description: data.description || '',
+        genres: data.genre ? data.genre.split(',').map(function(s) { return s.trim(); }) : [],
+        tags: data.tags ? data.tags.split(',').map(function(s) { return s.trim(); }) : [],
+        country: data.country,
+        year: data.year,
+        status: data.status,
+        schedule_day: data.schedule || '',
+        rating: data.rating || null,
+        poster_src: data.thumbnail || '',
+        banner_src: data.banner || '',
+        expected_episode_count: data.totalEp || null,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await db.collection('series').doc(slug).set(seriesMeta, { merge: true });
+      // Audit log
+      await logAdminAction('save_anime', slug, { fields: Object.keys(data) });
       showToast('✅ Đã lưu phim');
       document.getElementById('animeForm').style.display = 'none';
       loadAnimeTable();
@@ -447,6 +469,7 @@
       var batch = db.batch();
       eps.forEach(function (d) { batch.delete(d.ref); });
       await batch.commit();
+      await logAdminAction('delete_anime', id, { episodes_deleted: eps.size });
       showToast('✅ Đã xóa phim và tập liên quan');
       loadAnimeTable();
     } catch (e) { showToast('❌ Lỗi xóa'); }
@@ -481,6 +504,7 @@
       var animeDoc = await db.collection('anime').doc(animeId).get();
       var currentEp = Math.max(animeDoc.data().currentEp || 0, epNum);
       await db.collection('anime').doc(animeId).update({ currentEp: currentEp });
+      await logAdminAction('add_episode', animeId, { episode: epNum, type: type, label: label });
       showToast('✅ Đã thêm tập ' + epNum);
       document.getElementById('epNumber').value = epNum + 1;
       document.getElementById('epUrl').value = '';
@@ -513,7 +537,7 @@
 
   window.deleteEpisodeAdmin = async function (epId) {
     if (!confirm('Xóa tập này?')) return;
-    try { await db.collection('episodes').doc(epId).delete(); showToast('✅ Đã xóa'); loadEpisodesAdmin(); }
+    try { await db.collection('episodes').doc(epId).delete(); await logAdminAction('delete_episode', epId, {}); showToast('✅ Đã xóa'); loadEpisodesAdmin(); }
     catch (e) { showToast('❌ Lỗi'); }
   };
 
@@ -544,6 +568,7 @@
         count: parseInt(document.getElementById('trendingCount').value) || 12,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
+      await logAdminAction('save_trending', 'config/trending', { item_count: items.length });
       showToast('✅ Đã lưu cấu hình Trending');
     } catch (e) { showToast('❌ Lỗi: ' + e.message); }
   }
@@ -674,6 +699,7 @@
         twitterCard: document.getElementById('cfgTwitterCard').value,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
+      await logAdminAction('save_site_config', 'config/site', { siteName: siteName });
       showToast('✅ Đã lưu cấu hình Site');
     } catch (e) { showToast('❌ Lỗi: ' + e.message); }
   }
@@ -724,6 +750,7 @@
   window.toggleUserRole = async function (uid, role) {
     try {
       await db.collection('users').doc(uid).update({ role: role });
+      await logAdminAction('change_user_role', uid, { new_role: role });
       showToast('✅ Đã đổi role thành ' + role);
       loadUsersAdmin();
     } catch (e) { showToast('❌ Lỗi'); }
@@ -752,6 +779,21 @@
     toast.style.opacity = '1';
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(function () { toast.style.opacity = '0'; }, 4000);
+  }
+
+  async function logAdminAction(action, target, detail) {
+    try {
+      if (!FIREBASE_READY || !db || !currentUser) return;
+      await db.collection('audit_log').add({
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        admin_uid: currentUser.uid,
+        admin_email: currentUser.email || '',
+        action: action,
+        target: target || '',
+        detail: detail || {},
+        result: 'success'
+      });
+    } catch (e) { console.warn('[audit_log] Failed to write:', e.message); }
   }
 
   // Auto-check admin login
