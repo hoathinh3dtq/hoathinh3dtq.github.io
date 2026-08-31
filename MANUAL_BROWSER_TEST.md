@@ -417,3 +417,143 @@
 | Config | | | |
 | Navigation | | | |
 | **TOTAL** | **33** | | |
+
+---
+
+## 34. FAVICON / BRAND ICON
+
+| Field | Value |
+|-------|-------|
+| **Step** | Mở site trên browser. Kiểm tra tab icon. |
+| **Expected** | Tab hiển thị icon film reel với H/3D (không phải emoji 🎬). Hiển thị rõ ở 16x16. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 35. FAVICON — ALL PAGES
+
+| Field | Value |
+|-------|-------|
+| **Step** | Duyệt qua: index.html, xem-phim.html, player.html, admin.html, category pages |
+| **Expected** | Tất cả trang đều hiển thị favicon mới. Admin có icon riêng (không phải ⚙). |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 36. APPLE TOUCH ICON
+
+| Field | Value |
+|-------|-------|
+| **Step** | Thêm site vào home screen trên iOS (hoặc kiểm tra apple-touch-icon trong source) |
+| **Expected** | Icon hiển thị đúng (180x180). |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 37. DATA ARCHITECTURE — METADATA FIRESTORE OVERRIDE
+
+| Field | Value |
+|-------|-------|
+| **Step** | Admin → Anime → sửa title của một phim → Save. Mở detail page phim đó. |
+| **Expected** | Title hiển thị giá trị mới (từ Firestore series/{slug}). Không phải giá trị cũ từ JSON. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 38. DATA ARCHITECTURE — EPISODE STATS
+
+| Field | Value |
+|-------|-------|
+| **Step** | Mở detail page một phim. Kiểm tra Console → tìm `_episode_source` và `available_episode_count`. |
+| **Expected** | `_episode_source` = "firestore" hoặc "json_fallback". `available_episode_count` = số tập thực tế. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 39. DATA ARCHITECTURE — FALLBACK WARNING
+
+| Field | Value |
+|-------|-------|
+| **Step** | Disconnect network (DevTools → Network → Offline) → reload detail page. |
+| **Expected** | Console hiển thị warning: "[HH3DTQ] Using JSON fallback...". Trang vẫn hiển thị dữ liệu từ JSON. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 40. ADMIN AUDIT LOG
+
+| Field | Value |
+|-------|-------|
+| **Step** | Admin → thực hiện một action (sửa anime, thêm tập, sửa trending, sửa site config). Kiểm tra Firestore `audit_log` collection. |
+| **Expected** | Collection `audit_log` có document mới với: timestamp, admin_uid, admin_email, action, target, detail, result. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 41. ADMIN AUTH — NON-ADMIN ACCESS
+
+| Field | Value |
+|-------|-------|
+| **Step** | Login với tài khoản thường (không phải admin). Mở admin.html. |
+| **Expected** | Admin panel không load. Không thấy dashboard, form, buttons. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 42. ADMIN AUTH — LOGOUT REVOKES
+
+| Field | Value |
+|-------|-------|
+| **Step** | Login admin → admin.html hiển thị → logout → admin.html |
+| **Expected** | Admin panel biến mất. Không thể truy cập admin functions. |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## 43. FOOTER PLACEHOLDER LINKS
+
+| Field | Value |
+|-------|-------|
+| **Step** | Click một partner link bất kỳ trong footer |
+| **Expected** | Không hiển thị toast "đang được phát triển". Link không làm gì (SEO backlink). |
+| **Actual** | |
+| **PASS/FAIL** | |
+| **Console Error** | |
+
+---
+
+## Summary
+
+| Category | Total | Pass | Fail |
+|----------|-------|------|------|
+| Homepage | | | |
+| Detail | | | |
+| Player | | | |
+| History | | | |
+| Bookmark | | | |
+| Auth | | | |
+| Admin | | | |
+| Config | | | |
+| Navigation | | | |
+| Icon/Branding | | | |
+| Data Architecture | | | |
+| Admin Audit | | | |
+| **TOTAL** | **43** | | |

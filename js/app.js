@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!a.hasAttribute("data-has-handler") && !a.closest(".header-actions")) {
       a.addEventListener("click", function(e) {
         var text = a.textContent.trim();
-        if (text && text !== "▾" && text !== "✕" && !a.closest(".user-dropdown") && !a.closest(".genre-dropdown")) {
+        if (text && text !== "▾" && text !== "✕" && !a.closest(".user-dropdown") && !a.closest(".genre-dropdown") && !a.closest(".site-footer")) {
           showToast('⏳ Chức năng "' + text + '" đang được phát triển');
         }
       });
