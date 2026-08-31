@@ -22,7 +22,7 @@ try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     auth = firebase.auth();
-    storage = firebase.storage();
+    try { storage = firebase.storage(); } catch(e) { storage = null; }
     FIREBASE_READY = true;
     console.log("[HH3DTQ] Firebase initialized successfully");
   } else {
