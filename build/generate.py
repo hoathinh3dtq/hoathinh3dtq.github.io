@@ -193,7 +193,7 @@ DETAIL_SCRIPT = """<script>
     html += '</div>';
     html += '</div></div>';
 
-    // episodes — grid layout with VIỆT SUB / THUYẾT MINH sections
+    // episodes — grid layout with VIỆT SUB / THUYẾT MINH sections + filter tabs
     var epList = data.episodes || [];
     // Sort: latest-first (descending)
     var sortedEps = epList.slice().sort(function(a, b) {
@@ -229,15 +229,42 @@ DETAIL_SCRIPT = """<script>
       return html;
     }
 
-    html += '<div class="ep-section">';
+    // Filter tabs
+    html += '<div class="ep-filter-tabs">';
+    html += '<button class="ep-filter-tab active" onclick="switchEpFilter(\\'all\\',this)">Tất cả (' + epList.length + ')</button>';
+    html += '<button class="ep-filter-tab" onclick="switchEpFilter(\\'vietsub\\',this)">📺 VietSub (' + vsEps.length + ')</button>';
+    html += '<button class="ep-filter-tab" onclick="switchEpFilter(\\'thuyetminh\\',this)">🎙 Thuyết Minh (' + tmEps.length + ')</button>';
+    html += '</div>';
+
+    // Section: VIỆT SUB
+    html += '<div class="ep-section" id="epSectionVietsub">';
     html += '<div class="ep-section-header">📺 VIỆT SUB <span class="ep-count">(' + vsEps.length + ' tập)</span></div>';
     html += '<div class="ep-grid">' + renderEpGrid(vsEps, 'VietSub') + '</div>';
     html += '</div>';
 
-    html += '<div class="ep-section">';
+    // Section: THUYẾT MINH
+    html += '<div class="ep-section" id="epSectionThuyetminh">';
     html += '<div class="ep-section-header">🎙 THUYẾT MINH <span class="ep-count">(' + tmEps.length + ' tập)</span></div>';
     html += '<div class="ep-grid">' + renderEpGrid(tmEps, 'Thuyết Minh') + '</div>';
     html += '</div>';
+
+    // Filter switching
+    window.switchEpFilter = function(type, btn) {
+      document.querySelectorAll('.ep-filter-tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var vsSection = document.getElementById('epSectionVietsub');
+      var tmSection = document.getElementById('epSectionThuyetminh');
+      if (type === 'all') {
+        if (vsSection) vsSection.style.display = '';
+        if (tmSection) tmSection.style.display = '';
+      } else if (type === 'vietsub') {
+        if (vsSection) vsSection.style.display = '';
+        if (tmSection) tmSection.style.display = 'none';
+      } else {
+        if (vsSection) vsSection.style.display = 'none';
+        if (tmSection) tmSection.style.display = '';
+      }
+    };
 
     // comments
     html += '<h2 class="section-heading" style="margin-top:30px;"><span class="icon">💬</span> Bình luận</h2>';

@@ -486,6 +486,34 @@ img { max-width: 100%; height: auto; display: block; }
   color: var(--text-muted);
   font-weight: 400;
 }
+.ep-filter-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+.ep-filter-tab {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  font-weight: 500;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+.ep-filter-tab:hover {
+  color: var(--text-primary);
+}
+.ep-filter-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
 .ep-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
