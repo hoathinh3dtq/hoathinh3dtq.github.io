@@ -466,102 +466,93 @@ img { max-width: 100%; height: auto; display: block; }
   min-height: 34px;
 }
 
-/* === EPISODE GRID BUTTONS (detail page) === */
-.ep-section {
-  margin-bottom: 25px;
+/* === EPISODE GRID — matches hoathinh3d.ee layout === */
+/* Two sections always visible: VIỆT SUB + THUYẾT MINH */
+/* 12 cols desktop, 6 cols tablet, 4 cols mobile */
+
+.eps-list-container {
+  margin-bottom: 20px;
 }
-.ep-section-header {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
+.eps-server {
   margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  background: rgba(51,51,51,0.29);
+  border-radius: 3px;
+  padding: 0;
 }
-.ep-section-header .ep-count {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-weight: 400;
-}
-.ep-filter-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 18px;
-  border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
-.ep-filter-tab {
-  padding: 8px 16px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: var(--transition);
-  font-weight: 500;
-  background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  font-family: inherit;
-}
-.ep-filter-tab:hover {
-  color: var(--text-primary);
-}
-.ep-filter-tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-.ep-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.ep-btn {
+.eps-server-name {
   display: block;
-  padding: 10px 6px;
-  text-align: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  color: var(--text-primary);
+  padding: 8px 10px 5px;
+  color: #ea9b06;
+  font-weight: 700;
   font-size: 13px;
+  text-transform: uppercase;
+  background: rgba(51,51,51,0.29);
+  border-radius: 3px 3px 0 0;
+}
+.eps-server-name .eps-count {
+  font-weight: 400;
+  font-size: 11px;
+  color: #999;
+  text-transform: none;
+  margin-left: 6px;
+}
+.eps-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  padding: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.eps-btn {
+  display: block;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 12px;
   font-weight: 500;
   font-family: inherit;
+  color: #ccc;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 1px 3px rgba(0,0,0,0.28);
 }
-.ep-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: #1a1a1a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(245,166,35,0.15);
+.eps-btn:hover {
+  color: #fff;
+  background: #252525;
+  border-color: #ea9b06;
 }
-.ep-btn.active {
-  background: var(--accent);
+.eps-btn.active {
+  background: #ea9b06;
   color: #000;
-  border-color: var(--accent);
+  border-color: #ea9b06;
   font-weight: 700;
 }
-.ep-btn.unavailable {
-  opacity: 0.4;
+.eps-btn.unavailable {
+  opacity: 0.35;
   cursor: not-allowed;
   text-decoration: line-through;
   pointer-events: none;
 }
-.ep-empty {
-  color: var(--text-muted);
+.eps-empty {
+  color: #888;
   font-size: 13px;
-  padding: 15px 0;
+  padding: 15px 8px;
   font-style: italic;
+}
+
+@media (max-width: 992px) {
+  .eps-grid { grid-template-columns: repeat(6, 1fr); }
+}
+@media (max-width: 576px) {
+  .eps-grid { grid-template-columns: repeat(4, 1fr); }
+  .eps-btn { padding: 7px 3px; font-size: 11px; }
 }
 /* === SCHEDULE TABS === */
 .schedule-tabs {
@@ -883,8 +874,6 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 768px) {
   .trending-grid { grid-template-columns: repeat(3, 1fr); }
   .episode-grid { grid-template-columns: repeat(2, 1fr); }
-  .ep-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-  .ep-btn { padding: 8px 4px; font-size: 12px; }
   .header-top { flex-direction: column; gap: 10px; }
   .nav-list { flex-wrap: wrap; }
   .nav-list > li > a { padding: 8px 10px; font-size: 12px; }
@@ -894,8 +883,6 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 480px) {
   .trending-grid { grid-template-columns: repeat(2, 1fr); }
   .episode-grid { grid-template-columns: repeat(2, 1fr); }
-  .ep-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-  .ep-btn { padding: 7px 3px; font-size: 11px; }
 }
 
 /* ========== DYNAMIC PAGINATION ========== */
