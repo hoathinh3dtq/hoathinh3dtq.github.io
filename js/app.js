@@ -36,7 +36,9 @@ try {
   FIREBASE_READY = false;
 }
 
-const ADMIN_EMAILS = ["admin@hh3dtq.com"];
+// No hardcoded admin emails — first user to register becomes the sole admin
+// To add more admins, use the Admin Panel → Users → promote
+
 let currentUser = null;
 let isAdmin = false;
 
@@ -86,6 +88,14 @@ if (FIREBASE_READY && auth) {
       try {
         const userDoc = await db.collection("users").doc(user.uid).get();
         isAdmin = userDoc.exists && userDoc.data().role === "admin";
+        // Auto-promote: if no admin exists yet, this user becomes admin
+        if (!isAdmin) {
+          const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
+          if (adminCheck.empty) {
+            await db.collection("users").doc(user.uid).update({ role: "admin" });
+            isAdmin = true;
+          }
+        }
       } catch(e) { isAdmin = false; }
     } else {
       isAdmin = false;
@@ -133,8 +143,14 @@ async function registerUser(email, password, displayName, phone) {
     await cred.user.updateProfile({ displayName });
     // Save user to Firestore (phone included)
     try {
+      // First user to register becomes the sole admin
+      let role = "user";
+      try {
+        const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
+        if (adminCheck.empty) role = "admin";
+      } catch(e) { /* if query fails, default to user */ }
       await db.collection("users").doc(cred.user.uid).set({
-        email, displayName, role: ADMIN_EMAILS.includes(email) ? "admin" : "user",
+        email, displayName, role: role,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         phone: phone || "", bookmarks: [], history: []
       });
