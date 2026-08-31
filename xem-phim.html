@@ -197,20 +197,51 @@
     html += '</div>';
     html += '</div></div>';
 
-    // episodes
-    html += '<h2 class="section-heading"><span class="icon">📺</span> Danh sách tập</h2>';
-    html += '<div class="ep-tabs">';
-    html += '<button class="ep-tab active" onclick="switchEpType(\'all\',this)">Tất cả (' + epList.length + ')</button>';
-    // count vietsub & thuyetminh
-    var vsCount = 0, tmCount = 0;
-    for (var i = 0; i < epList.length; i++) {
-      if (epList[i].type === 'vietsub') vsCount++;
-      else if (epList[i].type === 'thuyetminh') tmCount++;
+    // episodes — grid layout with VIỆT SUB / THUYẾT MINH sections
+    var epList = data.episodes || [];
+    // Sort: latest-first (descending)
+    var sortedEps = epList.slice().sort(function(a, b) {
+      return (b.episode_number || 0) - (a.episode_number || 0);
+    });
+    // Split by type
+    var vsEps = [], tmEps = [];
+    for (var i = 0; i < sortedEps.length; i++) {
+      if (sortedEps[i].type === 'thuyetminh') tmEps.push(sortedEps[i]);
+      else vsEps.push(sortedEps[i]);
     }
-    html += '<button class="ep-tab" onclick="switchEpType(\'vietsub\',this)">🇻🇳 VietSub (' + vsCount + ')</button>';
-    html += '<button class="ep-tab" onclick="switchEpType(\'thuyetminh\',this)">🎙 Thuyết Minh (' + tmCount + ')</button>';
+
+    // Get current episode from URL (for active state)
+    var currentEp = parseInt(new URLSearchParams(window.location.search).get('ep'), 10) || null;
+
+    function renderEpGrid(eps, typeLabel) {
+      if (!eps.length) {
+        return '<p class="ep-empty">Chưa có tập ' + typeLabel + ' nào.</p>';
+      }
+      var html = '';
+      for (var i = 0; i < eps.length; i++) {
+        var ep = eps[i];
+        var epNum = ep.episode_number || '?';
+        var isActive = currentEp === epNum ? ' active' : '';
+        var hasUrl = ep.url && ep.url.length > 0;
+        var cls = 'ep-btn' + isActive + (hasUrl ? '' : ' unavailable');
+        if (hasUrl) {
+          html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(epNum)) + '" class="' + cls + '">Tập ' + esc(String(epNum)) + '</a>';
+        } else {
+          html += '<span class="' + cls + '">Tập ' + esc(String(epNum)) + '</span>';
+        }
+      }
+      return html;
+    }
+
+    html += '<div class="ep-section">';
+    html += '<div class="ep-section-header">📺 VIỆT SUB <span class="ep-count">(' + vsEps.length + ' tập)</span></div>';
+    html += '<div class="ep-grid">' + renderEpGrid(vsEps, 'VietSub') + '</div>';
     html += '</div>';
-    html += '<div id="episodesContainer"></div>';
+
+    html += '<div class="ep-section">';
+    html += '<div class="ep-section-header">🎙 THUYẾT MINH <span class="ep-count">(' + tmEps.length + ' tập)</span></div>';
+    html += '<div class="ep-grid">' + renderEpGrid(tmEps, 'Thuyết Minh') + '</div>';
+    html += '</div>';
 
     // comments
     html += '<h2 class="section-heading" style="margin-top:30px;"><span class="icon">💬</span> Bình luận</h2>';
@@ -221,37 +252,6 @@
     html += '<div id="commentsContainer"><div class="loading">Đang tải bình luận...</div></div>';
 
     document.getElementById('animeDetail').innerHTML = html;
-
-    // render episodes
-    window._epList = epList;
-    window._slug = slug;
-
-    window.renderEpisodes = function(epList, filter) {
-      var ehtml = '';
-      for (var i = 0; i < epList.length; i++) {
-        var ep = epList[i];
-        if (filter !== 'all' && ep.type !== filter) continue;
-        var badge = ep.type === 'vietsub'
-          ? '<span class="ep-badge vietsub">VietSub</span>'
-          : '<span class="ep-badge thuyetminh">Thuyết Minh</span>';
-        ehtml += '<div class="episode-item">';
-        ehtml += '<span class="ep-num">Tập ' + esc(String(ep.episode_number || '?')) + '</span>';
-        ehtml += badge;
-        ehtml += '<a href="player.html?slug=' + encodeURIComponent(window._slug) + '&amp;ep=' + esc(String(ep.episode_number || '?')) + '" class="ep-link">▶ Xem</a>';
-        ehtml += '</div>';
-      }
-      if (!ehtml) ehtml = '<p style="color:#888;padding:15px;">Không có tập nào.</p>';
-      document.getElementById('episodesContainer').innerHTML = ehtml;
-    };
-
-    window.switchEpType = function(type, btn) {
-      document.querySelectorAll('.ep-tab').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      window.renderEpisodes(window._epList || [], type);
-    };
-
-    // initial render
-    window.renderEpisodes(epList, 'all');
 
     // load comments and votes
     if (typeof loadComments === 'function') loadComments(slug);
