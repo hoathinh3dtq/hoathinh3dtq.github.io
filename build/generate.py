@@ -193,12 +193,11 @@ DETAIL_SCRIPT = """<script>
     html += '</div>';
     html += '</div></div>';
 
-    // episodes — grid layout matching hoathinh3d.ee (12 cols desktop, 6 tablet, 4 mobile)
-    // Two sections always visible: VIỆT SUB + THUYẾT MINH
+    // episodes — grid layout with filter tabs + VIỆT SUB / THUYẾT MINH sections
     var epList = data.episodes || [];
-    // Sort: latest-first (descending) — newest on top
+    // Sort: latest-first (descending), numeric sort
     var sortedEps = epList.slice().sort(function(a, b) {
-      return (b.episode_number || 0) - (a.episode_number || 0);
+      return (Number(b.episode_number) || 0) - (Number(a.episode_number) || 0);
     });
     // Split by type
     var vsEps = [], tmEps = [];
@@ -210,41 +209,61 @@ DETAIL_SCRIPT = """<script>
     // Get current episode from URL (for active state)
     var currentEp = parseInt(new URLSearchParams(window.location.search).get('ep'), 10) || null;
 
-    function renderEpsGrid(eps, typeLabel) {
-      if (!eps.length) {
-        return '<p class="eps-empty">Chưa có tập ' + typeLabel + ' nào.</p>';
-      }
+    function renderEpsGrid(eps) {
+      if (!eps.length) return '';
       var html = '';
       for (var i = 0; i < eps.length; i++) {
         var ep = eps[i];
-        var epNum = ep.episode_number || '?';
+        var epNum = Number(ep.episode_number) || 0;
         var isActive = currentEp === epNum ? ' active' : '';
         var hasUrl = ep.url && ep.url.length > 0;
         var cls = 'eps-btn' + isActive + (hasUrl ? '' : ' unavailable');
+        var label = 'Tập ' + esc(String(epNum));
         if (hasUrl) {
-          html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(epNum)) + '" class="' + cls + '">' + esc(String(epNum)) + '</a>';
+          html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(epNum)) + '" class="' + cls + '">' + label + '</a>';
         } else {
-          html += '<span class="' + cls + '">' + esc(String(epNum)) + '</span>';
+          html += '<span class="' + cls + '">' + label + '</span>';
         }
       }
       return html;
     }
 
-    html += '<div class="eps-list-container">';
+    // Filter tabs
+    html += '<div class="eps-filter">';
+    html += '<button class="eps-filter-btn active" onclick="filterEps(\\'all\\',this)">Tất cả <b>' + epList.length + '</b></button>';
+    html += '<button class="eps-filter-btn" onclick="filterEps(\\'vietsub\\',this)">VietSub <b>' + vsEps.length + '</b></button>';
+    html += '<button class="eps-filter-btn" onclick="filterEps(\\'thuyetminh\\',this)">Thuyết Minh <b>' + tmEps.length + '</b></button>';
+    html += '</div>';
 
     // VIỆT SUB section
-    html += '<div class="eps-server">';
-    html += '<div class="eps-server-name">📺 VIỆT SUB <span class="eps-count">(' + vsEps.length + ' tập)</span></div>';
-    html += '<div class="eps-grid">' + renderEpsGrid(vsEps, 'VietSub') + '</div>';
+    html += '<div class="eps-server" id="epsVsSection">';
+    html += '<div class="eps-server-name"><span class="eps-icon">📺</span> VIỆT SUB <span class="eps-count">' + vsEps.length + ' tập</span></div>';
+    html += '<div class="eps-grid">' + (renderEpsGrid(vsEps) || '<p class="eps-empty">Chưa có tập VietSub nào.</p>') + '</div>';
     html += '</div>';
 
     // THUYẾT MINH section
-    html += '<div class="eps-server">';
-    html += '<div class="eps-server-name">🎙 THUYẾT MINH <span class="eps-count">(' + tmEps.length + ' tập)</span></div>';
-    html += '<div class="eps-grid">' + renderEpsGrid(tmEps, 'Thuyết Minh') + '</div>';
+    html += '<div class="eps-server" id="epsTmSection">';
+    html += '<div class="eps-server-name"><span class="eps-icon">🎙️</span> THUYẾT MINH <span class="eps-count">' + tmEps.length + ' tập</span></div>';
+    html += '<div class="eps-grid">' + (renderEpsGrid(tmEps) || '<p class="eps-empty">Chưa có tập Thuyết Minh nào.</p>') + '</div>';
     html += '</div>';
 
-    html += '</div>';
+    // Filter switching
+    window.filterEps = function(type, btn) {
+      document.querySelectorAll('.eps-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var vsSection = document.getElementById('epsVsSection');
+      var tmSection = document.getElementById('epsTmSection');
+      if (type === 'all') {
+        if (vsSection) vsSection.style.display = '';
+        if (tmSection) tmSection.style.display = '';
+      } else if (type === 'vietsub') {
+        if (vsSection) vsSection.style.display = '';
+        if (tmSection) tmSection.style.display = 'none';
+      } else {
+        if (vsSection) vsSection.style.display = 'none';
+        if (tmSection) tmSection.style.display = '';
+      }
+    };
 
     // comments
     html += '<h2 class="section-heading" style="margin-top:30px;"><span class="icon">💬</span> Bình luận</h2>';

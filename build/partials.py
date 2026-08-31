@@ -41,7 +41,7 @@ def head(title, desc, rel=""):
   <link rel="icon" type="image/png" sizes="32x32" href="{rel}favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="{rel}apple-touch-icon.png">
   <link rel="manifest" href="{rel}manifest.json">
-  <link rel="stylesheet" href="{rel}css/style.css">"""
+  <link rel="stylesheet" href="{rel}css/style.css?v=3">"""
 
 def header(active, rel=""):
     """Generate full header with logo, nav, genre dropdown."""
