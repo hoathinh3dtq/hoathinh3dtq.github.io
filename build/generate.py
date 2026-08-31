@@ -26,10 +26,6 @@ INDEX_SCRIPT = """<script>
     var trending = D.sorted('rating').slice(0, 12);
     R.renderGrid(document.getElementById('trendingGrid'), trending, 'anime', 1);
 
-    // latest updates: episode cards, sorted by latest
-    var latest = D.sorted('latest').slice(0, 30);
-    R.renderGrid(document.getElementById('episodeGrid'), latest, 'episode');
-
     // schedule tabs: 7 days from data/schedule.json
     var scheduleEl = document.getElementById('scheduleSection');
     if (scheduleEl) {
@@ -54,6 +50,17 @@ INDEX_SCRIPT = """<script>
           scheduleEl.innerHTML = html;
         });
     }
+
+    // full listing with pagination (481 series, 30 per page)
+    R.mountListing({
+      grid: '#listingGrid',
+      pager: '#listingPager',
+      countEl: '#listingCount',
+      sort: 'latest',
+      kind: 'episode',
+      rank: false,
+      filter: null
+    });
   });
   // schedule tab switching
   document.addEventListener('click', function(e) {
@@ -273,7 +280,7 @@ SEARCH_SCRIPT = """<script>
 # ---- page generators ----
 
 def gen_index():
-    """Generate index.html with trending, schedule tabs, and latest episodes."""
+    """Generate index.html with trending, schedule tabs, and full paginated listing."""
     main = """  <section>
     <h2 class="section-heading"><span class="icon">🔥</span> Đang thịnh hành</h2>
     <div class="trending-grid" id="trendingGrid">
@@ -297,10 +304,15 @@ def gen_index():
     <div id="scheduleSection">
       <p style="padding:24px;color:#888;">Đang tải lịch chiếu...</p>
     </div>
+  </section>
 
-    <div class="episode-grid" id="episodeGrid" style="margin-top:20px;">
+  <section style="margin-top:30px;">
+    <h2 class="section-heading"><span class="icon">🆕</span> Tất Cả Phim</h2>
+    <div class="listing-count" id="listingCount" style="color:#888;font-size:13px;margin-bottom:10px;"></div>
+    <div class="episode-grid" id="listingGrid">
       <p style="padding:24px;color:#888;">Đang tải dữ liệu...</p>
     </div>
+    <div class="pagination" id="listingPager"></div>
   </section>"""
     return page_wrap(
         'HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub',
