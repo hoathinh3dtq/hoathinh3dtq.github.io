@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow reading all public data
+    match /series/{slug} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    match /episodes/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    match /anime/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    match /comments/{docId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null &&
+        (request.auth.uid == resource.data.userId || request.auth.token.role == 'admin');
+    }
+    match /audit_log/{docId} {
+      allow read: if request.auth != null && request.auth.token.role == 'admin';
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    // Users: anyone can create their own doc on registration, read own, admin read/write all
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null &&
+        (request.auth.uid == userId || request.auth.token.role == 'admin');
+      allow delete: if request.auth != null && request.auth.token.role == 'admin';
+    }
+  }
+}

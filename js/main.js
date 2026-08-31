@@ -176,7 +176,7 @@ function handleRegister(event) {
   if (!name) { showToast('❌ Vui lòng nhập tên hiển thị'); return false; }
   if (!email || !email.includes('@')) { showToast('❌ Email không hợp lệ'); return false; }
   if (!password || password.length < 6) { showToast('❌ Mật khẩu tối thiểu 6 ký tự'); return false; }
-  if (typeof registerUser === 'function') registerUser(email, password, name);
+  if (typeof registerUser === 'function') registerUser(email, password, name, phone);
   return false;
 }
 

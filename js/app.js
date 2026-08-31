@@ -126,16 +126,21 @@ function escapeHtml(str) {
 
 // ========== AUTH FUNCTIONS ==========
 
-async function registerUser(email, password, displayName) {
+async function registerUser(email, password, displayName, phone) {
   if (!FIREBASE_READY) { showToast("⚠ Firebase chưa được cấu hình. Vui lòng liên hệ admin qua Telegram: @scanhihi"); return false; }
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName });
-    await db.collection("users").doc(cred.user.uid).set({
-      email, displayName, role: "user",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      phone: "", bookmarks: [], history: []
-    });
+    // Save user to Firestore (phone included)
+    try {
+      await db.collection("users").doc(cred.user.uid).set({
+        email, displayName, role: "user",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        phone: phone || "", bookmarks: [], history: []
+      });
+    } catch(fsErr) {
+      console.warn("[HH3DTQ] Firestore write failed (user created in Auth):", fsErr.message);
+    }
     closeModal("loginModal");
     showToast("✅ Đăng ký thành công!");
     return true;
