@@ -1,51 +1,20 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Xem Phim - HH3DTQ</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+  <meta name="description" content="HH3DTQ - Xem phim hoạt hình 3D Trung Quốc 4K thuyết minh vietsub.">
+  <meta name="keywords" content="hh3dtq, hh3d, phim hoạt hình 3D, donghua, hoạt hình Trung Quốc, tu tiên, huyền huyễn, 4K, thuyết minh, vietsub">
+  <meta property="og:title" content="Xem Phim - HH3DTQ">
+  <meta property="og:description" content="HH3DTQ - Xem phim hoạt hình 3D Trung Quốc 4K thuyết minh vietsub.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HH3DTQ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Xem Phim - HH3DTQ">
+  <meta name="twitter:description" content="HH3DTQ - Xem phim hoạt hình 3D Trung Quốc 4K thuyết minh vietsub.">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .anime-detail { display: flex; gap: 25px; margin-bottom: 30px; flex-wrap: wrap; }
-    .anime-poster { flex: 0 0 280px; }
-    .anime-poster img { width: 100%; border-radius: 10px; }
-    .anime-info { flex: 1; min-width: 300px; }
-    .anime-info h1 { font-size: 24px; margin-bottom: 8px; color: #f5a623; }
-    .anime-info .subtitle { color: #888; font-size: 14px; margin-bottom: 15px; }
-    .anime-meta { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
-    .anime-meta span { background: #1a1a1a; padding: 5px 12px; border-radius: 15px; font-size: 13px; color: #ccc; }
-    .anime-desc { color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
-    .vote-section { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .vote-stars { display: flex; gap: 3px; }
-    .vote-star { font-size: 28px; cursor: pointer; color: #333; transition: 0.15s; }
-    .vote-star:hover, .vote-star.active { color: #f5a623; }
-    .vote-display { font-size: 18px; font-weight: 700; color: #f5a623; }
-    .ep-tabs { display: flex; gap: 2px; margin-bottom: 15px; }
-    .ep-tab { padding: 10px 20px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #ccc; cursor: pointer; font-family: inherit; font-size: 14px; border-radius: 5px 5px 0 0; }
-    .ep-tab.active { background: #f5a623; color: #000; border-color: #f5a623; font-weight: 600; }
-    .episode-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
-    .episode-item { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px; text-align: center; transition: 0.2s; }
-    .episode-item:hover { border-color: #f5a623; }
-    .episode-item .ep-num { display: block; font-weight: 700; font-size: 15px; margin-bottom: 5px; }
-    .episode-item .ep-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; margin-bottom: 8px; }
-    .ep-badge.vietsub { background: #27ae60; color: #fff; }
-    .ep-badge.thuyetminh { background: #e67e22; color: #fff; }
-    .episode-item .ep-link { display: inline-block; padding: 5px 15px; background: #f5a623; color: #000; border-radius: 5px; font-size: 12px; font-weight: 600; text-decoration: none; }
-    .comment-form { display: flex; gap: 10px; margin-bottom: 20px; }
-    .comment-form input { flex: 1; padding: 10px 14px; background: #0d0d0d; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; font-family: inherit; }
-    .comment-form button { padding: 10px 20px; background: #f5a623; color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: inherit; }
-    .comment-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
-    .comment-avatar { width: 36px; height: 36px; border-radius: 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .comment-body { flex: 1; }
-    .comment-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .comment-header strong { font-size: 13px; }
-    .comment-time { font-size: 11px; color: #666; }
-    .comment-text { font-size: 14px; color: #ccc; }
-    .btn-delete-comment { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 11px; margin-top: 5px; }
-    .loading, .no-data, .error { text-align: center; padding: 30px; color: #888; }
-    @media (max-width: 768px) { .anime-detail { flex-direction: column; } .anime-poster { flex: 0 0 auto; max-width: 200px; margin: 0 auto; } }
-  </style>
 </head>
 <body>
 
@@ -53,8 +22,14 @@
   <div class="container">
     <div class="header-top">
       <div class="logo">
-        <a href="index.html"><span style="font-size:26px;font-weight:900;color:#f5a623;letter-spacing:2px;">HH3DTQ</span></a>
-        <div class="logo-text"><strong>HH3DTQ</strong>Phim Hoạt Hình 3D Trung Quốc 4K<br>Thuyết Minh VietSub</div>
+        <a href="index.html">
+          <img src="images/logo-1.webp" alt="HH3DTQ" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
+          <span style="display:none; font-size:26px; font-weight:900; color:var(--accent); letter-spacing:2px;">HH3DTQ</span>
+        </a>
+        <div class="logo-text">
+          <strong>HH3DTQ</strong>
+          Phim Hoạt Hình 3D Trung Quốc 4K<br>Thuyết Minh VietSub
+        </div>
       </div>
       <div class="header-actions">
         <a href="javascript:void(0)">Lịch sử</a>
@@ -64,47 +39,54 @@
     </div>
     <nav class="main-nav">
       <ul class="nav-list">
-        <li><a href="index.html">Trang chủ</a></li>
-        <li class="has-dropdown"><a href="javascript:void(0)">Thể Loại ▾</a><div class="genre-dropdown"><a href="javascript:void(0)">Tu Tiên</a><a href="javascript:void(0)">Tiên Hiệp</a><a href="javascript:void(0)">Huyền Huyễn</a><a href="javascript:void(0)">Đô Thị</a><a href="javascript:void(0)">Trùng Sinh</a><a href="javascript:void(0)">Hài Hước</a><a href="javascript:void(0)">Kiếm Hiệp</a><a href="javascript:void(0)">Cổ Trang</a><a href="javascript:void(0)">Xuyên Không</a></div></li>
-        <li><a href="top-xem-nhieu.html">Top Xem Nhiều</a></li>
-        <li><a href="lich-chieu.html">Lịch Chiếu</a></li>
-        <li><a href="hoan-thanh.html">Hoàn Thành</a></li>
-        <li><a href="javascript:void(0)">Lịch Sử</a></li>
-        <li><a href="moi-cap-nhat.html">Mới Cập Nhật</a></li>
-        <li><a href="javascript:void(0)">Bookmark</a></li>
+        <li><a href="index.html">Trang chủ</a></li><li class="has-dropdown"><a href="javascript:void(0)">Thể Loại ▾</a><div class="genre-dropdown"><a href="category/tu-tien.html">Tu Tiên</a><a href="category/tien-hiep.html">Tiên Hiệp</a><a href="category/huyen-huyen.html">Huyền Huyễn</a><a href="category/do-thi.html">Đô Thị</a><a href="category/trung-sinh.html">Trùng Sinh</a><a href="category/hai-huoc.html">Hài Hước</a><a href="category/kiem-hiep.html">Kiếm Hiệp</a><a href="category/co-trang.html">Cổ Trang</a><a href="category/xuyen-khong.html">Xuyên Không</a></div></li><li><a href="top-xem-nhieu.html">Top Xem Nhiều</a></li><li><a href="lich-chieu.html">Lịch Chiếu</a></li><li><a href="hoan-thanh.html">Hoàn Thành</a></li><li><a href="moi-cap-nhat.html">Mới Cập Nhật</a></li>
       </ul>
     </nav>
   </div>
 </header>
 
-<main class="container main-content" id="animeDetail">
-  <div class="loading">Đang tải thông tin phim...</div>
+<main class="container main-content">
+  <div class="search-box">
+    <form onsubmit="window.location.href=&#39;tim-kiem.html?q=&#39;+encodeURIComponent(this.querySelector(&#39;input&#39;).value.trim());return false;">
+      <input type="text" placeholder="Tìm kiếm phim…">
+      <button type="submit">🔍 Tìm kiếm</button>
+    </form>
+  </div>
+  <div id="animeDetail">
+    <div class="loading" style="text-align:center;padding:50px;color:#888;">⏳ Đang tải thông tin phim...</div>
+  </div>
 </main>
 
 <footer class="site-footer">
   <div class="container">
     <div class="footer-brand">
-      <a href="index.html"><span style="font-size:22px;font-weight:900;color:#f5a623;">HH3DTQ</span></a>
+      <a href="index.html">
+        <img src="images/logo-1.webp" alt="HH3DTQ" style="height:40px;margin:0 auto;" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
+        <span style="display:none; font-size:22px; font-weight:900; color:var(--accent);">HH3DTQ</span>
+      </a>
       <p class="copyright">Copyright © 2025 HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
       <p class="contact">📱 Contact Telegram: <a href="https://t.me/scanhihi" target="_blank" rel="noopener">@scanhihi</a></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;"><a href="javascript:void(0)" style="color:var(--text-muted);">Sitemap</a></p>
     </div>
-    <div class="footer-bottom"><p>hh3dtq - Kho phim hoạt hình 3D Trung Quốc chất lượng cao.</p></div>
+    <div class="footer-links"><a href="javascript:void(0)">hhkungfu</a><a href="javascript:void(0)">hhpanda</a><a href="javascript:void(0)">xoilac</a><a href="javascript:void(0)">GG88</a><a href="javascript:void(0)">Sunwin</a><a href="javascript:void(0)">CakhiaTV</a><a href="javascript:void(0)">Vebo</a><a href="javascript:void(0)">qq88</a><a href="javascript:void(0)">M7</a><a href="javascript:void(0)">new88</a><a href="javascript:void(0)">f8bet</a><a href="javascript:void(0)">Socolive</a><a href="javascript:void(0)">Hitclub</a><a href="javascript:void(0)">Jun88</a><a href="javascript:void(0)">rophim</a><a href="javascript:void(0)">iwin68</a><a href="javascript:void(0)">gavangtv</a><a href="javascript:void(0)">Vip66</a><a href="javascript:void(0)">rakhoitv</a><a href="javascript:void(0)">Go88</a><a href="javascript:void(0)">789Club</a><a href="javascript:void(0)">B52club</a><a href="javascript:void(0)">topbet</a><a href="javascript:void(0)">bong88</a><a href="javascript:void(0)">8day</a><a href="javascript:void(0)">RIKVIP</a><a href="javascript:void(0)">xoso66</a><a href="javascript:void(0)">ee88</a><a href="javascript:void(0)">s8net</a><a href="javascript:void(0)">ao88game</a><a href="javascript:void(0)">uy88play</a><a href="javascript:void(0)">23win</a><a href="javascript:void(0)">188mfun</a><a href="javascript:void(0)">luck8386</a><a href="javascript:void(0)">SONCLUB</a><a href="javascript:void(0)">nohu90</a><a href="javascript:void(0)">MM88</a><a href="javascript:void(0)">say88</a><a href="javascript:void(0)">XX88</a><a href="javascript:void(0)">FLY88</a><a href="javascript:void(0)">F168</a><a href="javascript:void(0)">Viva88</a><a href="javascript:void(0)">kubet</a><a href="javascript:void(0)">RR88</a><a href="javascript:void(0)">c168</a><a href="javascript:void(0)">Good88</a><a href="javascript:void(0)">zo88</a><a href="javascript:void(0)">HI88</a><a href="javascript:void(0)">sv88</a><a href="javascript:void(0)">luongson</a><a href="javascript:void(0)">sao789</a><a href="javascript:void(0)">8XBET</a><a href="javascript:void(0)">mmlive</a><a href="javascript:void(0)">sin88</a><a href="javascript:void(0)">may88</a><a href="javascript:void(0)">9bet</a></div>
+    <div class="footer-bottom">
+      <p>HH3DTQ - Kho phim hoạt hình 3D Trung Quốc chất lượng cao. Tất cả nội dung được sưu tầm từ internet.</p>
+    </div>
   </div>
 </footer>
 
-<!-- Login Modal -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
     <button class="modal-close">✕</button>
     <h2>🔐 Đăng nhập / Đăng ký</h2>
     <div class="tab-row" style="margin-bottom:15px;">
-      <button class="tab-btn active" onclick="switchAuthTab('login',this)">Đăng nhập</button>
-      <button class="tab-btn" onclick="switchAuthTab('register',this)">Đăng ký</button>
+      <button class="tab-btn active" onclick="switchAuthTab(&#39;login&#39;,this)">Đăng nhập</button>
+      <button class="tab-btn" onclick="switchAuthTab(&#39;register&#39;,this)">Đăng ký</button>
     </div>
     <div id="loginTab">
       <div class="tab-row" style="margin-bottom:10px;">
-        <button class="tab-btn active" onclick="switchLoginMethod('email',this)" style="font-size:12px;">Email</button>
-        <button class="tab-btn" onclick="switchLoginMethod('phone',this)" style="font-size:12px;">SĐT</button>
+        <button class="tab-btn active" onclick="switchLoginMethod(&#39;email&#39;,this)" style="font-size:12px;">Email</button>
+        <button class="tab-btn" onclick="switchLoginMethod(&#39;phone&#39;,this)" style="font-size:12px;">SĐT</button>
       </div>
       <form onsubmit="handleLogin(event);return false;">
         <div class="form-group" id="loginEmailGroup"><label>Email</label><input type="email" id="loginEmail" placeholder="email@example.com" required></div>
@@ -125,124 +107,132 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="js/app.js"></script>
-	<script src="js/image-map.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/image-map.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/render.js"></script>
 <script>
-// ========== ANIME DETAIL PAGE ==========
-const urlParams = new URLSearchParams(window.location.search);
-const animeId = urlParams.get('id') || 'tien-nghich';
-let currentEpType = 'all';
-
-async function loadAnimeDetail() {
-  const container = document.getElementById('animeDetail');
-  container.innerHTML = '<div class="loading">⏳ Đang tải thông tin phim...</div>';
-
-  try {
-    const data = await getAnimeData(animeId);
-
-    if (!data) {
-      container.innerHTML = '<div class="error" style="text-align:center;padding:50px;"><h2>🔍 Không tìm thấy phim</h2><p style="color:#888;margin:10px 0;">Series "<strong>' + escapeHtml(animeId) + '</strong>" không tồn tại trong cơ sở dữ liệu.</p><p style="color:#666;font-size:13px;">Kiểm tra lại URL hoặc liên hệ admin qua Telegram: <a href="https://t.me/scanhihi" style="color:#f5a623;">@scanhihi</a></p><a href="index.html" style="display:inline-block;margin-top:15px;background:#f5a623;color:#000;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;">🏠 Về trang chủ</a> <button onclick="loadAnimeDetail()" style="display:inline-block;margin-top:15px;margin-left:10px;background:#1a1a1a;color:#f5a623;border:1px solid #333;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button></div>';
-      return;
-    }
-
-    container.innerHTML = `
-      <div class="anime-detail">
-        <div class="anime-poster">
-          <img src="${data.thumbnail || ''}" alt="${escapeHtml(data.name || '')}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 450%22><rect fill=%22%23111%22 width=%22300%22 height=%22450%22/><text fill=%22%23555%22 x=%22150%22 y=%22225%22 text-anchor=%22middle%22 font-size=%2220%22>No Image</text></svg>'">
-        </div>
-        <div class="anime-info">
-          <h1>${escapeHtml(data.name || '')}</h1>
-          <div class="subtitle">${escapeHtml(data.nameEn || '')}</div>
-          <div class="anime-meta">
-            <span>🎭 ${escapeHtml(data.genre || '')}</span>
-            <span>⏱ ${data.duration || 20} Phút/Tập</span>
-            <span>📺 ${data.currentEp || 0}/${data.totalEp || 0} tập</span>
-            <span>📅 ${data.status === 'completed' ? 'Hoàn thành' : 'Đang chiếu'}</span>
-          </div>
-          <div class="anime-desc">${escapeHtml(data.description || '')}</div>
-          <div class="vote-section">
-            <div class="vote-stars" id="voteStars">
-              ${[1,2,3,4,5].map(s => `<span class="vote-star" data-stars="${s}" onclick="submitVote('${animeId}',${s})">★</span>`).join('')}
-            </div>
-            <span class="vote-display" id="voteDisplay">⭐ ...</span>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-heading"><span class="icon">📺</span> Danh sách tập</h2>
-      <div class="ep-tabs">
-        <button class="ep-tab active" onclick="switchEpType('all',this)">Tất cả</button>
-        <button class="ep-tab" onclick="switchEpType('vietsub',this)">🇻🇳 VietSub</button>
-        <button class="ep-tab" onclick="switchEpType('thuyetminh',this)">🎙 Thuyết Minh</button>
-      </div>
-      <div id="episodesContainer"><div class="loading">Đang tải tập phim...</div></div>
-
-      <h2 class="section-heading" style="margin-top:30px;"><span class="icon">💬</span> Bình luận</h2>
-      <div class="comment-form">
-        <input type="text" id="commentInput" placeholder="Viết bình luận...">
-        <button onclick="submitComment('${animeId}')">Gửi</button>
-      </div>
-      <div id="commentsContainer"><div class="loading">Đang tải bình luận...</div></div>
-    `;
-
-    loadEpisodes(animeId);
-    loadComments(animeId);
-    loadVotes(animeId);
-  } catch(e) {
-    container.innerHTML = '<div class="error" style="text-align:center;padding:50px;"><h2>⚠ Lỗi tải phim</h2><p style="color:#888;margin:10px 0;">Chi tiết lỗi: ' + escapeHtml(e.message || String(e)) + '</p><button onclick="loadAnimeDetail()" style="margin-top:10px;background:#f5a623;color:#000;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button> <a href="index.html" style="display:inline-block;margin-top:10px;margin-left:10px;color:#888;text-decoration:underline;">🏠 Về trang chủ</a></div>';
-    console.error('[HH3DTQ] loadAnimeDetail error:', e);
+(function() {
+  var D = window.HH3D, R = window.HH3DRender;
+  var slug = new URLSearchParams(window.location.search).get('id');
+  if (!slug) {
+    document.getElementById('animeDetail').innerHTML = '<div style="text-align:center;padding:50px;color:#888;"><h2>🔍 Không tìm thấy phim</h2><p>Vui lòng chọn phim từ <a href="index.html" style="color:#f5a623;">trang chủ</a>.</p></div>';
+    return;
   }
+  function esc(s) { return R.esc(s); }
+  function poster(r) { return R.poster(r); }
+  D.ready().then(function() {
+    var url = D.base() + 'data/series/' + encodeURIComponent(slug) + '.json';
+    return fetch(url).then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }).then(function(data) {
+    var epList = data.episodes || [];
+    var metaHtml = '';
+    // genre
+    var genres = (data.genres || []).join(', ');
+    if (genres) metaHtml += '<span>🎭 ' + esc(genres) + '</span>';
+    // duration
+    if (data.duration) metaHtml += '<span>⏱ ' + esc(String(data.duration)) + ' Phút/Tập</span>';
+    // episode count
+    var have = data.available_episode_count || 0;
+    var want = data.expected_episode_count;
+    var epLabel = want && want > 0 ? have + '/' + want + ' tập' : have + ' tập';
+    metaHtml += '<span>📺 ' + epLabel + '</span>';
+    // status
+    metaHtml += '<span>📅 ' + (data.status_label || (data.status === 'completed' ? 'Hoàn Thành' : 'Đang chiếu')) + '</span>';
+
+    var html = '<div class="anime-detail">';
+    html += '<div class="anime-poster"><img src="' + esc(poster(data)) + '" alt="' + esc(data.title || '') + '" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 450%22><rect fill=%22%23111%22 width=%22300%22 height=%22450%22/><text fill=%22%23f5a623%22 x=%22150%22 y=%22225%22 text-anchor=%22middle%22 font-size=%2240%22>🎬</text></svg>\'"></div>';
+    html += '<div class="anime-info">';
+    html += '<h1>' + esc(data.title || slug) + '</h1>';
+    html += '<div class="subtitle">' + esc(data.title_alt || '') + '</div>';
+    html += '<div class="anime-meta">' + metaHtml + '</div>';
+    if (data.description) html += '<div class="anime-desc">' + esc(data.description) + '</div>';
+    // rating
+    html += '<div class="vote-section">';
+    html += '<div class="vote-stars" id="voteStars">';
+    for (var s = 1; s <= 5; s++) {
+      html += '<span class="vote-star' + (s <= Math.round(data.rating || 0) ? ' active' : '') + '" data-stars="' + s + '" onclick="submitVote(\'' + esc(slug) + '\',' + s + ')">★</span>';
+    }
+    html += '</div>';
+    html += '<span class="vote-display" id="voteDisplay">⭐ ' + (data.rating || '?') + ' (' + (data.vote_count || 0) + ' lượt)</span>';
+    html += '</div>';
+    html += '</div></div>';
+
+    // episodes
+    html += '<h2 class="section-heading"><span class="icon">📺</span> Danh sách tập</h2>';
+    html += '<div class="ep-tabs">';
+    html += '<button class="ep-tab active" onclick="switchEpType(\'all\',this)">Tất cả (' + epList.length + ')</button>';
+    // count vietsub & thuyetminh
+    var vsCount = 0, tmCount = 0;
+    for (var i = 0; i < epList.length; i++) {
+      if (epList[i].type === 'vietsub') vsCount++;
+      else if (epList[i].type === 'thuyetminh') tmCount++;
+    }
+    html += '<button class="ep-tab" onclick="switchEpType(\'vietsub\',this)">🇻🇳 VietSub (' + vsCount + ')</button>';
+    html += '<button class="ep-tab" onclick="switchEpType(\'thuyetminh\',this)">🎙 Thuyết Minh (' + tmCount + ')</button>';
+    html += '</div>';
+    html += '<div id="episodesContainer"></div>';
+
+    // comments
+    html += '<h2 class="section-heading" style="margin-top:30px;"><span class="icon">💬</span> Bình luận</h2>';
+    html += '<div class="comment-form">';
+    html += '<input type="text" id="commentInput" placeholder="Viết bình luận...">';
+    html += '<button onclick="submitComment(\'' + esc(slug) + '\')">Gửi</button>';
+    html += '</div>';
+    html += '<div id="commentsContainer"><div class="loading">Đang tải bình luận...</div></div>';
+
+    document.getElementById('animeDetail').innerHTML = html;
+
+    // render episodes
+    renderEpisodes(epList, 'all');
+    window._epList = epList;
+    window._slug = slug;
+
+    // load comments and votes
+    if (typeof loadComments === 'function') loadComments(slug);
+    if (typeof loadVotes === 'function') loadVotes(slug);
+  }).catch(function(e) {
+    document.getElementById('animeDetail').innerHTML =
+      '<div style="text-align:center;padding:50px;color:#888;">' +
+      '<h2>⚠ Lỗi tải phim</h2>' +
+      '<p>' + esc(e.message || String(e)) + '</p>' +
+      '<a href="index.html" style="display:inline-block;margin-top:15px;background:#f5a623;color:#000;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;">🏠 Về trang chủ</a> ' +
+      '<button onclick="location.reload()" style="display:inline-block;margin-top:15px;background:#1a1a1a;color:#f5a623;border:1px solid #333;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button>' +
+      '</div>';
+    console.error('[HH3DTQ] detail error:', e);
+  });
+})();
+
+function renderEpisodes(epList, filter) {
+  var html = '';
+  for (var i = 0; i < epList.length; i++) {
+    var ep = epList[i];
+    if (filter !== 'all' && ep.type !== filter) continue;
+    var badge = ep.type === 'vietsub'
+      ? '<span class="ep-badge vietsub">VietSub</span>'
+      : '<span class="ep-badge thuyetminh">Thuyết Minh</span>';
+    html += '<div class="episode-item">';
+    html += '<span class="ep-num">Tập ' + esc(String(ep.episode_number || '?')) + '</span>';
+    html += badge;
+    html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(ep.episode_number || '?')) + '" class="ep-link">▶ Xem</a>';
+    html += '</div>';
+  }
+  if (!html) html = '<p style="color:#888;padding:15px;">Không có tập nào.</p>';
+  document.getElementById('episodesContainer').innerHTML = html;
 }
 
 function switchEpType(type, btn) {
-  currentEpType = type;
-  document.querySelectorAll('.ep-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ep-tab').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
-  loadEpisodes(animeId, type === 'all' ? undefined : type);
+  renderEpisodes(window._epList || [], type);
 }
-
-function switchAuthTab(tab, btn) {
-  document.querySelectorAll('#loginModal .tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('loginTab').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('registerTab').style.display = tab === 'register' ? 'block' : 'none';
-}
-
-function switchLoginMethod(method, btn) {
-  document.querySelectorAll('#loginTab .tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('loginEmailGroup').style.display = method === 'email' ? 'block' : 'none';
-  document.getElementById('loginPhoneGroup').style.display = method === 'phone' ? 'block' : 'none';
-}
-
-function handleLogin(e) {
-  e.preventDefault();
-  const phoneGroup = document.getElementById('loginPhoneGroup');
-  if (phoneGroup.style.display !== 'none') {
-    loginWithPhone(document.getElementById('loginPhone').value, document.getElementById('loginPassword').value);
-  } else {
-    loginUser(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-  }
-}
-
-function handleRegister(e) {
-  e.preventDefault();
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const phone = document.getElementById('regPhone').value;
-  const password = document.getElementById('regPassword').value;
-  registerUser(email, password, name).then(success => {
-    if (success && phone) {
-      db.collection('users').doc(auth.currentUser.uid).update({ phone });
-    }
-  });
-}
-
-// Load detail on page load
-loadAnimeDetail();
 </script>
 </body>
 </html>
