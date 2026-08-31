@@ -32,13 +32,17 @@ PLAYER_SCRIPT = """<style>
     return;
   }
 
-  D.ready().then(function() {
-    var url = D.base() + 'data/series/' + encodeURIComponent(slug) + '.json';
-    return fetch(url).then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    });
-  }).then(function(data) {
+  var C = window.HH3DConfig;
+  var dataPromise = (C && C.loadSeriesData)
+    ? C.loadSeriesData(slug)
+    : D.ready().then(function() {
+        var url = D.base() + 'data/series/' + encodeURIComponent(slug) + '.json';
+        return fetch(url).then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+      });
+  dataPromise.then(function(data) {
     var epList = data.episodes || [];
     var ep = null;
     for (var i = 0; i < epList.length; i++) {
