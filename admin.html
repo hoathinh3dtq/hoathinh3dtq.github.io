@@ -1,16 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - hh3dtq</title>
+  <title>Admin Panel - HH3DTQ</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙</text></svg>">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .admin-layout { display: flex; min-height: calc(100vh - 140px); }
-    .admin-sidebar { width: 220px; background: #111; border-right: 1px solid #2a2a2a; padding: 20px 0; }
-    .admin-sidebar a { display: block; padding: 12px 20px; color: #ccc; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; }
+    .admin-sidebar { width: 220px; background: #111; border-right: 1px solid #2a2a2a; padding: 20px 0; flex-shrink: 0; }
+    .admin-sidebar a { display: block; padding: 12px 20px; color: #ccc; font-size: 14px; transition: 0.2s; border-left: 3px solid transparent; cursor: pointer; }
     .admin-sidebar a:hover, .admin-sidebar a.active { color: #f5a623; background: #1a1a1a; border-left-color: #f5a623; }
+    .admin-sidebar .section-label { padding: 15px 20px 5px; font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
     .admin-main { flex: 1; padding: 20px 30px; overflow-y: auto; }
     .admin-section { display: none; }
     .admin-section.active { display: block; }
@@ -21,21 +22,35 @@
     .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-family: inherit; }
     .btn-edit { background: #f5a623; color: #000; }
     .btn-del { background: #e74c3c; color: #fff; }
-    .btn-add { background: #27ae60; color: #fff; padding: 8px 18px; font-size: 14px; border-radius: 6px; border: none; cursor: pointer; }
+    .btn-add { background: #27ae60; color: #fff; padding: 8px 18px; font-size: 14px; border-radius: 6px; border: none; cursor: pointer; font-family: inherit; }
+    .btn-save { background: #f5a623; color: #000; padding: 8px 18px; font-size: 14px; border-radius: 6px; border: none; cursor: pointer; font-family: inherit; font-weight: 600; }
     .admin-form { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-top: 15px; border: 1px solid #2a2a2a; }
     .admin-form label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
     .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 8px 12px; background: #0d0d0d; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; font-family: inherit; margin-bottom: 12px; }
     .admin-form textarea { min-height: 80px; resize: vertical; }
     .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { outline: none; border-color: #f5a623; }
+    .admin-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media (max-width: 768px) { .admin-form .form-row { grid-template-columns: 1fr; } }
     .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
     .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 20px; text-align: center; }
     .stat-card .stat-num { font-size: 32px; font-weight: 900; color: #f5a623; }
     .stat-card .stat-label { font-size: 13px; color: #888; margin-top: 5px; }
-    .tab-row { display: flex; gap: 2px; margin-bottom: 15px; }
+    .tab-row { display: flex; gap: 2px; margin-bottom: 15px; flex-wrap: wrap; }
     .tab-btn { padding: 8px 16px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #ccc; cursor: pointer; font-family: inherit; font-size: 13px; border-radius: 5px 5px 0 0; }
     .tab-btn.active { background: #f5a623; color: #000; border-color: #f5a623; font-weight: 600; }
+    .trending-item { display: flex; align-items: center; gap: 12px; padding: 10px; background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 6px; margin-bottom: 8px; cursor: move; }
+    .trending-item .drag-handle { cursor: grab; color: #666; font-size: 18px; }
+    .trending-item img { width: 50px; height: 70px; object-fit: cover; border-radius: 4px; }
+    .trending-item .info { flex: 1; }
+    .trending-item .info .title { font-weight: 600; font-size: 14px; }
+    .trending-item .info .slug { font-size: 11px; color: #666; }
     .episode-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; padding: 8px; background: #0d0d0d; border-radius: 5px; }
     .episode-row span { font-size: 13px; min-width: 80px; }
+    .search-select { position: relative; }
+    .search-select .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #1a1a1a; border: 1px solid #333; border-radius: 0 0 5px 5px; max-height: 200px; overflow-y: auto; z-index: 100; display: none; }
+    .search-select .dropdown .item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #2a2a2a; }
+    .search-select .dropdown .item:hover { background: #f5a623; color: #000; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #1a1a1a; color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid #333; max-width: 350px; transition: opacity 0.3s; }
     @media (max-width: 768px) { .admin-layout { flex-direction: column; } .admin-sidebar { width: 100%; display: flex; overflow-x: auto; padding: 0; }
       .admin-sidebar a { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; } .admin-sidebar a.active { border-bottom-color: #f5a623; border-left: none; }
       .admin-stats { grid-template-columns: repeat(2, 1fr); } }
@@ -60,18 +75,28 @@
 
 <div class="admin-layout" id="adminLayout" style="display:none;">
   <aside class="admin-sidebar">
-    <a href="javascript:void(0)" class="active" data-section="dashboard">📊 Dashboard</a>
-    <a href="javascript:void(0)" data-section="anime">🎬 Quản lý Phim</a>
-    <a href="javascript:void(0)" data-section="episodes">📺 Quản lý Tập</a>
-    <a href="javascript:void(0)" data-section="comments">💬 Bình luận</a>
-    <a href="javascript:void(0)" data-section="votes">⭐ Vote</a>
-    <a href="javascript:void(0)" data-section="users">👥 Người dùng</a>
+    <div class="section-label">Tổng Quan</div>
+    <a class="active" data-section="dashboard">📊 Dashboard</a>
+
+    <div class="section-label">Nội Dung</div>
+    <a data-section="anime">🎬 Quản lý Phim</a>
+    <a data-section="episodes">📺 Quản lý Tập</a>
+    <a data-section="trending">🔥 Top Thịnh Hành</a>
+
+    <div class="section-label">Cấu Hình</div>
+    <a data-section="config">⚙ Cấu Hình Site</a>
+
+    <div class="section-label">Người Dùng</div>
+    <a data-section="comments">💬 Bình luận</a>
+    <a data-section="users">👥 Người dùng</a>
   </aside>
+
   <main class="admin-main" id="adminMain">
     <!-- Dashboard -->
     <div class="admin-section active" id="sec-dashboard">
-      <h2 style="color:#f5a623;">📊 Dashboard</h2>
+      <h2 style="color:#f5a623;margin-bottom:20px;">📊 Dashboard</h2>
       <div class="admin-stats" id="statsGrid"></div>
+      <div id="dashboardQuick" style="margin-top:20px;"></div>
     </div>
 
     <!-- Anime Management -->
@@ -80,29 +105,49 @@
       <button class="btn-add" onclick="showAddAnimeForm()">+ Thêm Phim Mới</button>
       <div class="admin-form" id="animeForm" style="display:none;">
         <input type="hidden" id="animeId">
-        <label>Tên phim (Tiếng Việt)</label><input type="text" id="animeName" placeholder="VD: Tiên Nghịch">
-        <label>Tên phim (Gốc)</label><input type="text" id="animeNameEn" placeholder="VD: Xian Ni">
-        <label>Thể loại</label><select id="animeGenre"><option>Tu Tiên</option><option>Tiên Hiệp</option><option>Huyền Huyễn</option><option>Đô Thị</option><option>Trùng Sinh</option><option>Hài Hước</option><option>Kiếm Hiệp</option><option>Cổ Trang</option><option>Xuyên Không</option></select>
+        <div class="form-row">
+          <div><label>Tên phim (Tiếng Việt) *</label><input type="text" id="animeName" placeholder="VD: Tiên Nghịch"></div>
+          <div><label>Tên gốc / Tiếng Trung</label><input type="text" id="animeNameEn" placeholder="VD: Xian Ni / 仙逆"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Tên khác (title_alt)</label><input type="text" id="animeTitleAlt" placeholder="Tên hiển thị phụ"></div>
+          <div><label>Slug</label><input type="text" id="animeSlug" placeholder="ten-phim"></div>
+        </div>
         <label>Mô tả</label><textarea id="animeDesc" placeholder="Mô tả phim..."></textarea>
-        <label>URL Ảnh thumbnail</label><input type="text" id="animeThumb" placeholder="https://...">
-        <label>Thời lượng (phút/tập)</label><input type="number" id="animeDuration" value="20">
-        <label>Tổng số tập</label><input type="number" id="animeTotalEp" value="52">
-        <label>Trạng thái</label><select id="animeStatus"><option value="ongoing">Đang chiếu</option><option value="completed">Hoàn thành</option></select>
-        <label>Lịch chiếu (thứ mấy)</label><select id="animeSchedule"><option value="">Không có</option><option value="0">Thứ Hai</option><option value="1">Thứ Ba</option><option value="2">Thứ Tư</option><option value="3">Thứ Năm</option><option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option><option value="6">Chủ Nhật</option></select>
+        <div class="form-row">
+          <div><label>Thể loại (cách nhau dấu phẩy)</label><input type="text" id="animeGenre" placeholder="Tu Tiên, Huyền Huyễn"></div>
+          <div><label>Quốc gia</label><input type="text" id="animeCountry" value="Trung Quốc"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Năm phát hành</label><input type="number" id="animeYear" value="2025"></div>
+          <div><label>Thời lượng (phút/tập)</label><input type="number" id="animeDuration" value="20"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Poster URL</label><input type="text" id="animeThumb" placeholder="images/..."></div>
+          <div><label>Banner/Backdrop URL</label><input type="text" id="animeBanner" placeholder="(tùy chọn)"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Tổng số tập dự kiến</label><input type="number" id="animeTotalEp" value="52"></div>
+          <div><label>Trạng thái</label><select id="animeStatus"><option value="ongoing">Đang chiếu</option><option value="completed">Hoàn thành</option></select></div>
+        </div>
+        <div class="form-row">
+          <div><label>Lịch chiếu</label><select id="animeSchedule"><option value="">Không có</option><option value="0">Thứ Hai</option><option value="1">Thứ Ba</option><option value="2">Thứ Tư</option><option value="3">Thứ Năm</option><option value="4">Thứ Sáu</option><option value="5">Thứ Bảy</option><option value="6">Chủ Nhật</option></select></div>
+          <div><label>Tags (cách nhau dấu phẩy)</label><input type="text" id="animeTags" placeholder="4K, VietSub, Thuyết Minh"></div>
+        </div>
         <div style="margin-top:10px;">
-          <button class="btn-add" onclick="saveAnime()">💾 Lưu</button>
+          <button class="btn-save" onclick="saveAnime()">💾 Lưu Phim</button>
           <button class="btn-sm btn-del" onclick="document.getElementById('animeForm').style.display='none'">Hủy</button>
         </div>
       </div>
       <div style="overflow-x:auto;margin-top:15px;">
         <table class="admin-table" id="animeTable">
-          <thead><tr><th>Tên</th><th>Thể loại</th><th>Tập</th><th>TT</th><th>Thao tác</th></tr></thead>
+          <thead><tr><th>Tên</th><th>Slug</th><th>Thể loại</th><th>Tập</th><th>TT</th><th>Thao tác</th></tr></thead>
           <tbody id="animeTableBody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Episodes Management -->
+    <!-- Episodes -->
     <div class="admin-section" id="sec-episodes">
       <h2 style="color:#f5a623;">📺 Quản lý Tập Phim</h2>
       <div class="admin-form">
@@ -110,7 +155,8 @@
         <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
           <div><label>Số tập</label><input type="number" id="epNumber" value="1" style="width:80px;"></div>
           <div><label>Loại</label><select id="epType"><option value="vietsub">VietSub</option><option value="thuyetminh">Thuyết Minh</option></select></div>
-          <div><label>URL</label><input type="text" id="epUrl" placeholder="Link embed/video"></div>
+          <div><label>Label (tùy chọn)</label><input type="text" id="epLabel" placeholder="VD: Tập 1 - VIP" style="width:150px;"></div>
+          <div style="flex:1;"><label>URL Video</label><input type="text" id="epUrl" placeholder="Link embed/video"></div>
           <div><button class="btn-add" onclick="addEpisodeAdmin()">+ Thêm Tập</button></div>
         </div>
       </div>
@@ -122,7 +168,57 @@
       <div id="episodesAdminList"></div>
     </div>
 
-    <!-- Comments Management -->
+    <!-- Trending Management -->
+    <div class="admin-section" id="sec-trending">
+      <h2 style="color:#f5a623;">🔥 Quản lý Top Thịnh Hành</h2>
+      <p style="color:#888;font-size:13px;margin-bottom:15px;">Kéo thả để sắp xếp thứ tự. Bật/tắt để hiển thị trên trang chủ.</p>
+      <div class="admin-form" style="margin-bottom:15px;">
+        <div class="form-row">
+          <div><label>Tiêu đề section</label><input type="text" id="trendingTitle" value="Đang thịnh hành"></div>
+          <div><label>Số lượng hiển thị</label><input type="number" id="trendingCount" value="12" min="1" max="50"></div>
+        </div>
+        <button class="btn-save" onclick="saveTrendingConfig()">💾 Lưu Cấu Hình</button>
+      </div>
+      <div class="admin-form">
+        <label>Tìm phim để thêm vào Trending</label>
+        <div class="search-select">
+          <input type="text" id="trendingSearch" placeholder="Gõ tên phim..." oninput="searchAnimeForTrending()" onfocus="searchAnimeForTrending()">
+          <div class="dropdown" id="trendingSearchDropdown"></div>
+        </div>
+      </div>
+      <div id="trendingList" style="margin-top:15px;"></div>
+    </div>
+
+    <!-- Site Config -->
+    <div class="admin-section" id="sec-config">
+      <h2 style="color:#f5a623;">⚙ Cấu Hình Website</h2>
+      <div class="admin-form">
+        <div class="form-row">
+          <div><label>Tên Site (Brand)</label><input type="text" id="cfgSiteName" value="HH3DTQ"></div>
+          <div><label>Tagline</label><input type="text" id="cfgTagline" value="Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub"></div>
+        </div>
+        <label>Mô tả Site (SEO Description)</label><textarea id="cfgDescription">HH3DTQ - Xem phim hoạt hình 3D Trung Quốc 4K, thuyết minh, vietsub. Kho phim donghua, tu tiên, huyền huyễn, đô thị mới nhất.</textarea>
+        <div class="form-row">
+          <div><label>SEO Keywords</label><input type="text" id="cfgKeywords" value="hh3dtq, hh3d, phim hoạt hình 3D, donghua, hoạt hình Trung Quốc, tu tiên, huyền huyễn, 4K, thuyết minh, vietsub"></div>
+          <div><label>Favicon Emoji</label><input type="text" id="cfgFavicon" value="🎬"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Contact Telegram</label><input type="text" id="cfgTelegram" value="@scanhihi"></div>
+          <div><label>Telegram URL</label><input type="text" id="cfgTelegramUrl" value="https://t.me/scanhihi"></div>
+        </div>
+        <div class="form-row">
+          <div><label>Logo URL</label><input type="text" id="cfgLogoUrl" value="images/logo-1.webp"></div>
+          <div><label>Copyright Text</label><input type="text" id="cfgCopyright" value="Copyright © 2025 HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub"></div>
+        </div>
+        <div class="form-row">
+          <div><label>OG Site Name</label><input type="text" id="cfgOgSiteName" value="HH3DTQ"></div>
+          <div><label>Twitter Card</label><select id="cfgTwitterCard"><option value="summary_large_image">summary_large_image</option><option value="summary">summary</option></select></div>
+        </div>
+        <button class="btn-save" onclick="saveSiteConfig()">💾 Lưu Cấu Hình Site</button>
+      </div>
+    </div>
+
+    <!-- Comments -->
     <div class="admin-section" id="sec-comments">
       <h2 style="color:#f5a623;">💬 Quản lý Bình luận</h2>
       <div style="overflow-x:auto;">
@@ -133,24 +229,12 @@
       </div>
     </div>
 
-    <!-- Votes Management -->
-    <div class="admin-section" id="sec-votes">
-      <h2 style="color:#f5a623;">⭐ Quản lý Vote</h2>
-      <p style="color:#888;font-size:13px;margin-bottom:15px;">⚠ Admin có thể sửa số lượng vote nhưng <b style="color:#f5a623;">sao không đổi</b> (chỉ đổi hiển thị số lượt vote)</p>
-      <div style="overflow-x:auto;">
-        <table class="admin-table" id="votesTable">
-          <thead><tr><th>Phim</th><th>⭐ Sao TB</th><th>👥 Số lượt</th><th>📝 Sửa số lượt</th></tr></thead>
-          <tbody id="votesTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Users Management -->
+    <!-- Users -->
     <div class="admin-section" id="sec-users">
       <h2 style="color:#f5a623;">👥 Người dùng</h2>
       <div style="overflow-x:auto;">
         <table class="admin-table" id="usersTable">
-          <thead><tr><th>Email</th><th>Tên</th><th>SĐT</th><th>Role</th><th>Ngày đăng ký</th></tr></thead>
+          <thead><tr><th>Email</th><th>Tên</th><th>SĐT</th><th>Role</th><th>Ngày đăng ký</th><th>Thao tác</th></tr></thead>
           <tbody id="usersTableBody"></tbody>
         </table>
       </div>
@@ -158,7 +242,7 @@
   </main>
 </div>
 
-<!-- Admin Login Modal -->
+<!-- Admin Login -->
 <div class="modal-overlay active" id="adminLoginModal">
   <div class="modal">
     <h2>⚙ Admin Login</h2>
@@ -173,301 +257,514 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="js/app.js"></script>
-    <script src="js/image-map.js"></script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+<script src="js/features.js"></script>
 <script>
-// ========== ADMIN PANEL LOGIC ==========
+/* ========================================================================
+   HH3DTQ Admin Panel — Comprehensive site management
+   ======================================================================== */
+(function () {
+  'use strict';
 
-let currentEpFilter = 'all';
+  var currentEpFilter = 'all';
 
-function loadAdminPanel() {
-  document.getElementById('adminLoginModal').classList.remove('active');
-  document.getElementById('adminLayout').style.display = 'flex';
-  loadDashboard();
-  loadAnimeTable();
-  loadCommentsAdmin();
-  loadVotesAdmin();
-  loadUsersAdmin();
-  loadEpAnimeSelect();
+  /* --------------------- INIT ------------------------- */
 
-  // Sidebar navigation
-  document.querySelectorAll('.admin-sidebar a').forEach(link => {
-    link.addEventListener('click', function() {
-      document.querySelectorAll('.admin-sidebar a').forEach(l => l.classList.remove('active'));
-      this.classList.add('active');
-      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-      document.getElementById('sec-' + this.dataset.section).classList.add('active');
-      if (this.dataset.section === 'anime') loadAnimeTable();
-      if (this.dataset.section === 'comments') loadCommentsAdmin();
-      if (this.dataset.section === 'votes') loadVotesAdmin();
-      if (this.dataset.section === 'users') loadUsersAdmin();
-    });
-  });
-}
-
-async function loadDashboard() {
-  try {
-    const [animeSnap, usersSnap, commentsSnap, episodesSnap] = await Promise.all([
-      db.collection('anime').get(),
-      db.collection('users').get(),
-      db.collection('comments').get(),
-      db.collection('episodes').get()
-    ]);
-    document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-num">${animeSnap.size}</div><div class="stat-label">Phim</div></div>
-      <div class="stat-card"><div class="stat-num">${episodesSnap.size}</div><div class="stat-label">Tập phim</div></div>
-      <div class="stat-card"><div class="stat-num">${usersSnap.size}</div><div class="stat-label">Người dùng</div></div>
-      <div class="stat-card"><div class="stat-num">${commentsSnap.size}</div><div class="stat-label">Bình luận</div></div>`;
-  } catch(e) { console.error(e); }
-}
-
-// ===== ANIME MANAGEMENT =====
-function showAddAnimeForm() {
-  document.getElementById('animeForm').style.display = 'block';
-  document.getElementById('animeId').value = '';
-  ['animeName','animeNameEn','animeDesc','animeThumb'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('animeDuration').value = '20';
-  document.getElementById('animeTotalEp').value = '52';
-  document.getElementById('animeStatus').value = 'ongoing';
-  document.getElementById('animeSchedule').value = '';
-}
-
-async function loadAnimeTable() {
-  try {
-    const snapshot = await db.collection('anime').orderBy('name').get();
-    let html = '';
-    snapshot.forEach(doc => {
-      const a = doc.data();
-      html += `<tr>
-        <td><strong>${escapeHtml(a.name || '')}</strong><br><small style="color:#888;">${escapeHtml(a.nameEn || '')}</small></td>
-        <td>${escapeHtml(a.genre || '')}</td>
-        <td>${a.currentEp || 0}/${a.totalEp || 0}</td>
-        <td><span class="badge-${a.status === 'completed' ? 'full' : 'ongoing'}">${a.status === 'completed' ? 'Full' : 'Đang chiếu'}</span></td>
-        <td>
-          <button class="btn-sm btn-edit" onclick="editAnime('${doc.id}')">✏</button>
-          <button class="btn-sm btn-del" onclick="deleteAnime('${doc.id}')">🗑</button>
-        </td></tr>`;
-    });
-    document.getElementById('animeTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có phim nào</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-async function saveAnime() {
-  const id = document.getElementById('animeId').value;
-  const data = {
-    name: document.getElementById('animeName').value,
-    nameEn: document.getElementById('animeNameEn').value,
-    genre: document.getElementById('animeGenre').value,
-    description: document.getElementById('animeDesc').value,
-    thumbnail: document.getElementById('animeThumb').value,
-    duration: parseInt(document.getElementById('animeDuration').value) || 20,
-    totalEp: parseInt(document.getElementById('animeTotalEp').value) || 52,
-    status: document.getElementById('animeStatus').value,
-    schedule: document.getElementById('animeSchedule').value,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  window.loadAdminPanel = function () {
+    document.getElementById('adminLoginModal').classList.remove('active');
+    document.getElementById('adminLayout').style.display = 'flex';
+    loadDashboard();
+    loadAnimeTable();
+    loadCommentsAdmin();
+    loadUsersAdmin();
+    loadEpAnimeSelect();
+    loadTrendingList();
+    loadSiteConfig();
+    initSidebarNav();
   };
-  try {
-    if (id) {
-      await db.collection('anime').doc(id).update(data);
-    } else {
-      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      data.currentEp = 0;
-      await db.collection('anime').add(data);
-    }
-    showToast('✅ Đã lưu phim');
-    document.getElementById('animeForm').style.display = 'none';
-    loadAnimeTable();
-  } catch(e) { showToast('❌ Lỗi lưu'); }
-}
 
-async function editAnime(id) {
-  try {
-    const doc = await db.collection('anime').doc(id).get();
-    if (!doc.exists) return;
-    const a = doc.data();
-    document.getElementById('animeId').value = id;
-    document.getElementById('animeName').value = a.name || '';
-    document.getElementById('animeNameEn').value = a.nameEn || '';
-    document.getElementById('animeGenre').value = a.genre || 'Tu Tiên';
-    document.getElementById('animeDesc').value = a.description || '';
-    document.getElementById('animeThumb').value = a.thumbnail || '';
-    document.getElementById('animeDuration').value = a.duration || 20;
-    document.getElementById('animeTotalEp').value = a.totalEp || 52;
-    document.getElementById('animeStatus').value = a.status || 'ongoing';
-    document.getElementById('animeSchedule').value = a.schedule || '';
-    document.getElementById('animeForm').style.display = 'block';
-  } catch(e) { showToast('❌ Lỗi'); }
-}
-
-async function deleteAnime(id) {
-  if (!confirm('Xóa phim này và tất cả tập, bình luận, vote liên quan?')) return;
-  try {
-    await db.collection('anime').doc(id).delete();
-    showToast('✅ Đã xóa phim');
-    loadAnimeTable();
-  } catch(e) { showToast('❌ Lỗi xóa'); }
-}
-
-// ===== EPISODES =====
-async function loadEpAnimeSelect() {
-  try {
-    const snapshot = await db.collection('anime').orderBy('name').get();
-    let html = '<option value="">-- Chọn phim --</option>';
-    snapshot.forEach(doc => { html += `<option value="${doc.id}">${escapeHtml(doc.data().name || '')}</option>`; });
-    document.getElementById('epAnimeSelect').innerHTML = html;
-  } catch(e) { console.error(e); }
-}
-
-async function addEpisodeAdmin() {
-  const animeId = document.getElementById('epAnimeSelect').value;
-  if (!animeId) { showToast('❌ Chọn phim trước'); return; }
-  const epNum = parseInt(document.getElementById('epNumber').value);
-  const type = document.getElementById('epType').value;
-  const url = document.getElementById('epUrl').value;
-  if (!epNum || !url) { showToast('❌ Nhập đầy đủ thông tin'); return; }
-  try {
-    await db.collection('episodes').add({
-      animeId, episodeNumber: epNum, type, url,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  function initSidebarNav() {
+    document.querySelectorAll('.admin-sidebar a[data-section]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.querySelectorAll('.admin-sidebar a').forEach(function (l) { l.classList.remove('active'); });
+        this.classList.add('active');
+        var sec = this.dataset.section;
+        document.querySelectorAll('.admin-section').forEach(function (s) { s.classList.remove('active'); });
+        document.getElementById('sec-' + sec).classList.add('active');
+        if (sec === 'anime') loadAnimeTable();
+        if (sec === 'comments') loadCommentsAdmin();
+        if (sec === 'users') loadUsersAdmin();
+        if (sec === 'trending') loadTrendingList();
+        if (sec === 'config') loadSiteConfig();
+      });
     });
-    // Update anime current episode count
-    const animeDoc = await db.collection('anime').doc(animeId).get();
-    const currentEp = Math.max(animeDoc.data().currentEp || 0, epNum);
-    await db.collection('anime').doc(animeId).update({ currentEp });
-    showToast('✅ Đã thêm tập');
-    document.getElementById('epNumber').value = epNum + 1;
-    document.getElementById('epUrl').value = '';
-    loadEpisodesAdmin();
-  } catch(e) { showToast('❌ Lỗi thêm tập'); }
-}
+  }
 
-async function loadEpisodesAdmin() {
-  const animeId = document.getElementById('epAnimeSelect').value;
-  const container = document.getElementById('episodesAdminList');
-  if (!animeId) { container.innerHTML = '<p>Chọn phim để xem danh sách tập</p>'; return; }
-  try {
-    let query = db.collection('episodes').where('animeId', '==', animeId);
-    if (currentEpFilter !== 'all') query = query.where('type', '==', currentEpFilter);
-    const snapshot = await query.orderBy('episodeNumber', 'asc').get();
-    let html = '';
-    snapshot.forEach(doc => {
-      const ep = doc.data();
-      html += `<div class="episode-row">
-        <span><strong>Tập ${ep.episodeNumber}</strong></span>
-        <span class="ep-type-badge ${ep.type}" style="padding:2px 8px;border-radius:3px;font-size:11px;background:${ep.type==='vietsub'?'#27ae60':'#e67e22'};color:#fff;">${ep.type==='vietsub'?'VietSub':'Thuyết Minh'}</span>
-        <span style="flex:1;font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(ep.url || '')}</span>
-        <button class="btn-sm btn-del" onclick="deleteEpisodeAdmin('${doc.id}')">🗑</button>
-      </div>`;
-    });
-    container.innerHTML = html || '<p>Chưa có tập nào</p>';
-  } catch(e) { console.error(e); }
-}
+  /* --------------------- DASHBOARD -------------------- */
 
-async function deleteEpisodeAdmin(epId) {
-  if (!confirm('Xóa tập này?')) return;
-  try { await db.collection('episodes').doc(epId).delete(); showToast('✅ Đã xóa'); loadEpisodesAdmin(); }
-  catch(e) { showToast('❌ Lỗi'); }
-}
+  async function loadDashboard() {
+    var stats = { anime: 0, episodes: 0, users: 0, comments: 0 };
+    try {
+      var results = await Promise.allSettled([
+        db.collection('anime').get(),
+        db.collection('episodes').get(),
+        db.collection('users').get(),
+        db.collection('comments').get()
+      ]);
+      stats.anime = results[0].status === 'fulfilled' ? results[0].value.size : 0;
+      stats.episodes = results[1].status === 'fulfilled' ? results[1].value.size : 0;
+      stats.users = results[2].status === 'fulfilled' ? results[2].value.size : 0;
+      stats.comments = results[3].status === 'fulfilled' ? results[3].value.size : 0;
+    } catch (e) { /* silent */ }
 
-function filterEpisodesAdmin(type, btn) {
-  currentEpFilter = type;
-  document.querySelectorAll('#sec-episodes .tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  loadEpisodesAdmin();
-}
+    document.getElementById('statsGrid').innerHTML =
+      '<div class="stat-card"><div class="stat-num">' + stats.anime + '</div><div class="stat-label">Phim (Firestore)</div></div>' +
+      '<div class="stat-card"><div class="stat-num">' + stats.episodes + '</div><div class="stat-label">Tập phim</div></div>' +
+      '<div class="stat-card"><div class="stat-num">' + stats.users + '</div><div class="stat-label">Người dùng</div></div>' +
+      '<div class="stat-card"><div class="stat-num">' + stats.comments + '</div><div class="stat-label">Bình luận</div></div>';
 
-// ===== COMMENTS =====
-async function loadCommentsAdmin() {
-  try {
-    const snapshot = await db.collection('comments').orderBy('createdAt', 'desc').limit(100).get();
-    let html = '';
-    for (const doc of snapshot.docs) {
-      const c = doc.data();
-      let animeName = c.animeId;
-      try { const a = await db.collection('anime').doc(c.animeId).get(); if (a.exists) animeName = a.data().name; } catch(e) {}
-      html += `<tr>
-        <td>${escapeHtml(c.userName || '?')}</td>
-        <td>${escapeHtml(animeName)}</td>
-        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.text || '')}</td>
-        <td>${formatTime(c.createdAt)}</td>
-        <td><button class="btn-sm btn-del" onclick="deleteComment('${doc.id}');loadCommentsAdmin();">🗑</button></td>
-      </tr>`;
-    }
-    document.getElementById('commentsTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có bình luận</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-// ===== VOTES =====
-async function loadVotesAdmin() {
-  try {
-    const animeSnap = await db.collection('anime').orderBy('name').get();
-    let html = '';
-    for (const animeDoc of animeSnap.docs) {
-      const anime = animeDoc.data();
-      const voteSnap = await db.collection('votes').where('animeId', '==', animeDoc.id).get();
-      let totalStars = 0, count = 0;
-      voteSnap.forEach(v => { totalStars += v.data().stars; count++; });
-      const avg = count > 0 ? (totalStars / count).toFixed(1) : '0.0';
-      const displayCount = anime.voteCountOverride !== undefined ? anime.voteCountOverride : count;
-      html += `<tr>
-        <td>${escapeHtml(anime.name || '')}</td>
-        <td>⭐ ${avg}</td>
-        <td id="voteCount-${animeDoc.id}">${displayCount}</td>
-        <td>
-          <input type="number" id="voteInput-${animeDoc.id}" value="${displayCount}" style="width:70px;padding:4px 8px;background:#0d0d0d;border:1px solid #333;color:#fff;border-radius:4px;">
-          <button class="btn-sm btn-edit" onclick="adminUpdateVoteCount('${animeDoc.id}',document.getElementById('voteInput-${animeDoc.id}').value)">💾</button>
-        </td></tr>`;
-    }
-    document.getElementById('votesTableBody').innerHTML = html || '<tr><td colspan="4">Chưa có phim</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-// Override adminUpdateVoteCount from app.js
-async function adminUpdateVoteCount(animeId, newCount) {
-  if (!isAdmin) { showToast('❌ Chỉ admin mới sửa được'); return; }
-  try {
-    await db.collection('anime').doc(animeId).update({ voteCountOverride: parseInt(newCount) });
-    showToast('✅ Đã cập nhật số lượt vote (sao không đổi)');
-    document.getElementById('voteCount-' + animeId).textContent = newCount;
-  } catch(e) { showToast('❌ Lỗi'); }
-}
-
-// ===== USERS =====
-async function loadUsersAdmin() {
-  try {
-    const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
-    let html = '';
-    snapshot.forEach(doc => {
-      const u = doc.data();
-      html += `<tr>
-        <td>${escapeHtml(u.email || '')}</td>
-        <td>${escapeHtml(u.displayName || '')}</td>
-        <td>${escapeHtml(u.phone || '')}</td>
-        <td><span style="color:${u.role==='admin'?'#f5a623':'#888'}">${u.role || 'user'}</span></td>
-        <td>${formatTime(u.createdAt)}</td></tr>`;
-    });
-    document.getElementById('usersTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có người dùng</td></tr>';
-  } catch(e) { console.error(e); }
-}
-
-function handleAdminLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('adminEmail').value;
-  const password = document.getElementById('adminPassword').value;
-  loginAdmin(email, password);
-}
-
-// Auto-check if already logged in as admin
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    const userDoc = await db.collection('users').doc(user.uid).get();
-    if (userDoc.exists && userDoc.data().role === 'admin') {
-      isAdmin = true;
-      loadAdminPanel();
+    // Quick info about dataset
+    if (window.HH3D) {
+      window.HH3D.ready().then(function () {
+        var el = document.getElementById('dashboardQuick');
+        if (el) {
+          el.innerHTML = '<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:15px;">' +
+            '<strong style="color:#f5a623;">📦 Dataset (JSON tĩnh)</strong><br>' +
+            '<span style="font-size:13px;color:#888;">' +
+            window.HH3D.totalSeries() + ' series · ' +
+            window.HH3D.totalEpisodes().toLocaleString() + ' episodes · ' +
+            window.HH3D.totalPages() + ' pages</span></div>';
+        }
+      });
     }
   }
-});
+
+  /* --------------------- ANIME ------------------------ */
+
+  window.showAddAnimeForm = function () {
+    document.getElementById('animeForm').style.display = 'block';
+    ['animeId','animeName','animeNameEn','animeTitleAlt','animeSlug','animeDesc','animeGenre','animeCountry',
+     'animeThumb','animeBanner','animeTags'].forEach(function (id) { document.getElementById(id).value = ''; });
+    document.getElementById('animeYear').value = '2025';
+    document.getElementById('animeDuration').value = '20';
+    document.getElementById('animeTotalEp').value = '52';
+    document.getElementById('animeStatus').value = 'ongoing';
+    document.getElementById('animeSchedule').value = '';
+  };
+
+  async function loadAnimeTable() {
+    try {
+      var snapshot = await db.collection('anime').orderBy('name').get();
+      var html = '';
+      snapshot.forEach(function (doc) {
+        var a = doc.data();
+        html += '<tr>' +
+          '<td><strong>' + escapeHtml(a.name || '') + '</strong><br><small style="color:#888;">' + escapeHtml(a.nameEn || '') + '</small></td>' +
+          '<td><code style="font-size:11px;color:#888;">' + escapeHtml(doc.id) + '</code></td>' +
+          '<td>' + escapeHtml(a.genre || '') + '</td>' +
+          '<td>' + (a.currentEp || 0) + '/' + (a.totalEp || 0) + '</td>' +
+          '<td><span style="color:' + (a.status === 'completed' ? '#27ae60' : '#f5a623') + '">' + (a.status === 'completed' ? 'Hoàn thành' : 'Đang chiếu') + '</span></td>' +
+          '<td>' +
+            '<button class="btn-sm btn-edit" onclick="editAnime(\'' + doc.id + '\')">✏</button> ' +
+            '<button class="btn-sm btn-del" onclick="deleteAnime(\'' + doc.id + '\')">🗑</button>' +
+          '</td></tr>';
+      });
+      document.getElementById('animeTableBody').innerHTML = html || '<tr><td colspan="6">Chưa có phim nào trong Firestore</td></tr>';
+    } catch (e) { console.error(e); }
+  }
+
+  window.saveAnime = async function () {
+    var id = document.getElementById('animeId').value;
+    var data = {
+      name: document.getElementById('animeName').value,
+      nameEn: document.getElementById('animeNameEn').value,
+      titleAlt: document.getElementById('animeTitleAlt').value,
+      slug: document.getElementById('animeSlug').value || id,
+      description: document.getElementById('animeDesc').value,
+      genre: document.getElementById('animeGenre').value,
+      country: document.getElementById('animeCountry').value || 'Trung Quốc',
+      year: parseInt(document.getElementById('animeYear').value) || 2025,
+      duration: parseInt(document.getElementById('animeDuration').value) || 20,
+      thumbnail: document.getElementById('animeThumb').value,
+      banner: document.getElementById('animeBanner').value,
+      totalEp: parseInt(document.getElementById('animeTotalEp').value) || 52,
+      status: document.getElementById('animeStatus').value,
+      schedule: document.getElementById('animeSchedule').value,
+      tags: document.getElementById('animeTags').value,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    try {
+      if (id) {
+        await db.collection('anime').doc(id).update(data);
+      } else {
+        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        data.currentEp = 0;
+        var docId = data.slug || data.name.toLowerCase().replace(/\s+/g, '-');
+        await db.collection('anime').doc(docId).set(data);
+      }
+      showToast('✅ Đã lưu phim');
+      document.getElementById('animeForm').style.display = 'none';
+      loadAnimeTable();
+    } catch (e) { showToast('❌ Lỗi: ' + e.message); }
+  };
+
+  window.editAnime = async function (id) {
+    try {
+      var doc = await db.collection('anime').doc(id).get();
+      if (!doc.exists) return;
+      var a = doc.data();
+      document.getElementById('animeId').value = id;
+      document.getElementById('animeName').value = a.name || '';
+      document.getElementById('animeNameEn').value = a.nameEn || '';
+      document.getElementById('animeTitleAlt').value = a.titleAlt || '';
+      document.getElementById('animeSlug').value = a.slug || id;
+      document.getElementById('animeDesc').value = a.description || '';
+      document.getElementById('animeGenre').value = a.genre || '';
+      document.getElementById('animeCountry').value = a.country || 'Trung Quốc';
+      document.getElementById('animeYear').value = a.year || 2025;
+      document.getElementById('animeDuration').value = a.duration || 20;
+      document.getElementById('animeThumb').value = a.thumbnail || '';
+      document.getElementById('animeBanner').value = a.banner || '';
+      document.getElementById('animeTotalEp').value = a.totalEp || 52;
+      document.getElementById('animeStatus').value = a.status || 'ongoing';
+      document.getElementById('animeSchedule').value = a.schedule || '';
+      document.getElementById('animeTags').value = a.tags || '';
+      document.getElementById('animeForm').style.display = 'block';
+    } catch (e) { showToast('❌ Lỗi'); }
+  };
+
+  window.deleteAnime = async function (id) {
+    if (!confirm('Xóa phim này và tất cả tập, bình luận, vote liên quan?')) return;
+    try {
+      await db.collection('anime').doc(id).delete();
+      // Also delete related episodes
+      var eps = await db.collection('episodes').where('animeId', '==', id).get();
+      var batch = db.batch();
+      eps.forEach(function (d) { batch.delete(d.ref); });
+      await batch.commit();
+      showToast('✅ Đã xóa phim và tập liên quan');
+      loadAnimeTable();
+    } catch (e) { showToast('❌ Lỗi xóa'); }
+  };
+
+  /* --------------------- EPISODES --------------------- */
+
+  async function loadEpAnimeSelect() {
+    try {
+      var snapshot = await db.collection('anime').orderBy('name').get();
+      var html = '<option value="">-- Chọn phim --</option>';
+      snapshot.forEach(function (doc) { html += '<option value="' + doc.id + '">' + escapeHtml(doc.data().name || '') + '</option>'; });
+      document.getElementById('epAnimeSelect').innerHTML = html;
+    } catch (e) { console.error(e); }
+  }
+
+  window.addEpisodeAdmin = async function () {
+    var animeId = document.getElementById('epAnimeSelect').value;
+    if (!animeId) { showToast('❌ Chọn phim trước'); return; }
+    var epNum = parseInt(document.getElementById('epNumber').value);
+    var type = document.getElementById('epType').value;
+    var url = document.getElementById('epUrl').value;
+    var label = document.getElementById('epLabel').value;
+    if (!epNum || !url) { showToast('❌ Nhập đầy đủ thông tin'); return; }
+    try {
+      await db.collection('episodes').add({
+        animeId: animeId, episodeNumber: epNum, type: type, url: url,
+        label: label || ('Tập ' + epNum),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      // Update anime episode count
+      var animeDoc = await db.collection('anime').doc(animeId).get();
+      var currentEp = Math.max(animeDoc.data().currentEp || 0, epNum);
+      await db.collection('anime').doc(animeId).update({ currentEp: currentEp });
+      showToast('✅ Đã thêm tập ' + epNum);
+      document.getElementById('epNumber').value = epNum + 1;
+      document.getElementById('epUrl').value = '';
+      document.getElementById('epLabel').value = '';
+      loadEpisodesAdmin();
+    } catch (e) { showToast('❌ Lỗi: ' + e.message); }
+  };
+
+  async function loadEpisodesAdmin() {
+    var animeId = document.getElementById('epAnimeSelect').value;
+    var container = document.getElementById('episodesAdminList');
+    if (!animeId) { container.innerHTML = '<p>Chọn phim để xem danh sách tập</p>'; return; }
+    try {
+      var query = db.collection('episodes').where('animeId', '==', animeId);
+      if (currentEpFilter !== 'all') query = query.where('type', '==', currentEpFilter);
+      var snapshot = await query.orderBy('episodeNumber', 'asc').get();
+      var html = '';
+      snapshot.forEach(function (doc) {
+        var ep = doc.data();
+        html += '<div class="episode-row">' +
+          '<span><strong>Tập ' + ep.episodeNumber + '</strong></span>' +
+          '<span style="padding:2px 8px;border-radius:3px;font-size:11px;background:' + (ep.type === 'vietsub' ? '#27ae60' : '#e67e22') + ';color:#fff;">' + (ep.type === 'vietsub' ? 'VietSub' : 'Thuyết Minh') + '</span>' +
+          '<span style="flex:1;font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(ep.url || '') + '</span>' +
+          '<button class="btn-sm btn-del" onclick="deleteEpisodeAdmin(\'' + doc.id + '\')">🗑</button>' +
+          '</div>';
+      });
+      container.innerHTML = html || '<p>Chưa có tập nào</p>';
+    } catch (e) { console.error(e); }
+  }
+
+  window.deleteEpisodeAdmin = async function (epId) {
+    if (!confirm('Xóa tập này?')) return;
+    try { await db.collection('episodes').doc(epId).delete(); showToast('✅ Đã xóa'); loadEpisodesAdmin(); }
+    catch (e) { showToast('❌ Lỗi'); }
+  };
+
+  window.filterEpisodesAdmin = function (type, btn) {
+    currentEpFilter = type;
+    document.querySelectorAll('#sec-episodes .tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    loadEpisodesAdmin();
+  };
+
+  /* --------------------- TRENDING --------------------- */
+
+  async function loadTrendingConfig() {
+    try {
+      var doc = await db.collection('config').doc('trending').get();
+      if (doc.exists) {
+        var d = doc.data();
+        document.getElementById('trendingTitle').value = d.title || 'Đang thịnh hành';
+        document.getElementById('trendingCount').value = d.count || 12;
+      }
+    } catch (e) { /* use defaults */ }
+  }
+
+  async function saveTrendingConfig() {
+    try {
+      await db.collection('config').doc('trending').set({
+        title: document.getElementById('trendingTitle').value,
+        count: parseInt(document.getElementById('trendingCount').value) || 12,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      showToast('✅ Đã lưu cấu hình Trending');
+    } catch (e) { showToast('❌ Lỗi: ' + e.message); }
+  }
+
+  async function loadTrendingList() {
+    try {
+      var doc = await db.collection('config').doc('trending').get();
+      var items = doc.exists ? (doc.data().items || []) : [];
+      var container = document.getElementById('trendingList');
+      if (items.length === 0) {
+        container.innerHTML = '<p style="color:#888;padding:15px;">Chưa có phim nào trong Trending. Dùng ô tìm kiếm bên trên để thêm.</p>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        html += '<div class="trending-item" draggable="true" data-index="' + i + '" data-slug="' + item.slug + '">' +
+          '<span class="drag-handle">☰</span>' +
+          '<span style="color:#f5a623;font-weight:700;min-width:24px;">' + (i + 1) + '</span>' +
+          '<img src="' + (item.poster || '') + '" alt="" onerror="this.style.display=\'none\'" style="width:50px;height:70px;object-fit:cover;border-radius:4px;">' +
+          '<div class="info"><div class="title">' + escapeHtml(item.title || item.slug) + '</div><div class="slug">' + escapeHtml(item.slug) + '</div></div>' +
+          '<button class="btn-sm btn-edit" onclick="moveTrendingItem(' + i + ',-1)" title="Lên trên">▲</button>' +
+          '<button class="btn-sm btn-edit" onclick="moveTrendingItem(' + i + ',1)" title="Xuống dưới">▼</button>' +
+          '<button class="btn-sm btn-del" onclick="removeTrendingItem(' + i + ')">✕</button>' +
+          '</div>';
+      }
+      container.innerHTML = html;
+    } catch (e) { console.error(e); }
+  }
+
+  window.searchAnimeForTrending = async function () {
+    var q = document.getElementById('trendingSearch').value.trim().toLowerCase();
+    var dropdown = document.getElementById('trendingSearchDropdown');
+    if (!q) { dropdown.style.display = 'none'; return; }
+
+    // Search from dataset
+    if (window.HH3D) {
+      await window.HH3D.ready();
+      var results = window.HH3D.search(q).slice(0, 10);
+      var html = '';
+      for (var i = 0; i < results.length; i++) {
+        var r = results[i];
+        html += '<div class="item" onclick="addTrendingItem(\'' + r.slug + '\',\'' + escapeHtml(r.title) + '\',\'' + (r.poster || '') + '\')">' +
+          escapeHtml(r.title) + ' <small style="color:#888;">(' + escapeHtml(r.slug) + ')</small></div>';
+      }
+      dropdown.innerHTML = html || '<div class="item" style="color:#888;">Không tìm thấy</div>';
+      dropdown.style.display = 'block';
+    }
+  };
+
+  window.addTrendingItem = async function (slug, title, poster) {
+    try {
+      var doc = await db.collection('config').doc('trending').get();
+      var items = doc.exists ? (doc.data().items || []) : [];
+      // Check if already exists
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].slug === slug) { showToast('⚠ Phim đã có trong Trending'); return; }
+      }
+      items.push({ slug: slug, title: title, poster: poster });
+      await db.collection('config').doc('trending').set({ items: items }, { merge: true });
+      document.getElementById('trendingSearch').value = '';
+      document.getElementById('trendingSearchDropdown').style.display = 'none';
+      showToast('✅ Đã thêm vào Trending');
+      loadTrendingList();
+    } catch (e) { showToast('❌ Lỗi: ' + e.message); }
+  };
+
+  window.removeTrendingItem = async function (index) {
+    try {
+      var doc = await db.collection('config').doc('trending').get();
+      var items = doc.exists ? (doc.data().items || []) : [];
+      items.splice(index, 1);
+      await db.collection('config').doc('trending').set({ items: items }, { merge: true });
+      showToast('✅ Đã xóa khỏi Trending');
+      loadTrendingList();
+    } catch (e) { showToast('❌ Lỗi'); }
+  };
+
+  window.moveTrendingItem = async function (index, direction) {
+    try {
+      var doc = await db.collection('config').doc('trending').get();
+      var items = doc.exists ? (doc.data().items || []) : [];
+      var newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= items.length) return;
+      var tmp = items[index];
+      items[index] = items[newIndex];
+      items[newIndex] = tmp;
+      await db.collection('config').doc('trending').set({ items: items }, { merge: true });
+      loadTrendingList();
+    } catch (e) { showToast('❌ Lỗi'); }
+  };
+
+  /* --------------------- SITE CONFIG ------------------ */
+
+  async function loadSiteConfig() {
+    try {
+      var doc = await db.collection('config').doc('site').get();
+      if (doc.exists) {
+        var c = doc.data();
+        document.getElementById('cfgSiteName').value = c.siteName || 'HH3DTQ';
+        document.getElementById('cfgTagline').value = c.tagline || '';
+        document.getElementById('cfgDescription').value = c.description || '';
+        document.getElementById('cfgKeywords').value = c.keywords || '';
+        document.getElementById('cfgFavicon').value = c.favicon || '🎬';
+        document.getElementById('cfgTelegram').value = c.telegram || '@scanhihi';
+        document.getElementById('cfgTelegramUrl').value = c.telegramUrl || 'https://t.me/scanhihi';
+        document.getElementById('cfgLogoUrl').value = c.logoUrl || 'images/logo-1.webp';
+        document.getElementById('cfgCopyright').value = c.copyright || '';
+        document.getElementById('cfgOgSiteName').value = c.ogSiteName || 'HH3DTQ';
+        document.getElementById('cfgTwitterCard').value = c.twitterCard || 'summary_large_image';
+      }
+    } catch (e) { /* use defaults */ }
+  }
+
+  async function saveSiteConfig() {
+    try {
+      await db.collection('config').doc('site').set({
+        siteName: document.getElementById('cfgSiteName').value,
+        tagline: document.getElementById('cfgTagline').value,
+        description: document.getElementById('cfgDescription').value,
+        keywords: document.getElementById('cfgKeywords').value,
+        favicon: document.getElementById('cfgFavicon').value,
+        telegram: document.getElementById('cfgTelegram').value,
+        telegramUrl: document.getElementById('cfgTelegramUrl').value,
+        logoUrl: document.getElementById('cfgLogoUrl').value,
+        copyright: document.getElementById('cfgCopyright').value,
+        ogSiteName: document.getElementById('cfgOgSiteName').value,
+        twitterCard: document.getElementById('cfgTwitterCard').value,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      showToast('✅ Đã lưu cấu hình Site');
+    } catch (e) { showToast('❌ Lỗi: ' + e.message); }
+  }
+
+  /* --------------------- COMMENTS --------------------- */
+
+  async function loadCommentsAdmin() {
+    try {
+      var snapshot = await db.collection('comments').orderBy('createdAt', 'desc').limit(100).get();
+      var html = '';
+      for (var i = 0; i < snapshot.docs.length; i++) {
+        var c = snapshot.docs[i].data();
+        var animeName = c.animeId;
+        try { var a = await db.collection('anime').doc(c.animeId).get(); if (a.exists) animeName = a.data().name; } catch (e) { }
+        html += '<tr>' +
+          '<td>' + escapeHtml(c.userName || '?') + '</td>' +
+          '<td>' + escapeHtml(animeName) + '</td>' +
+          '<td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(c.text || '') + '</td>' +
+          '<td>' + formatTime(c.createdAt) + '</td>' +
+          '<td><button class="btn-sm btn-del" onclick="deleteComment(\'' + snapshot.docs[i].id + '\');setTimeout(loadCommentsAdmin,500);">🗑</button></td>' +
+          '</tr>';
+      }
+      document.getElementById('commentsTableBody').innerHTML = html || '<tr><td colspan="5">Chưa có bình luận</td></tr>';
+    } catch (e) { console.error(e); }
+  }
+
+  /* --------------------- USERS ------------------------ */
+
+  async function loadUsersAdmin() {
+    try {
+      var snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+      var html = '';
+      snapshot.forEach(function (doc) {
+        var u = doc.data();
+        html += '<tr>' +
+          '<td>' + escapeHtml(u.email || '') + '</td>' +
+          '<td>' + escapeHtml(u.displayName || '') + '</td>' +
+          '<td>' + escapeHtml(u.phone || '') + '</td>' +
+          '<td><span style="color:' + (u.role === 'admin' ? '#f5a623' : '#888') + '">' + (u.role || 'user') + '</span></td>' +
+          '<td>' + formatTime(u.createdAt) + '</td>' +
+          '<td>' + (u.role !== 'admin' ? '<button class="btn-sm btn-edit" onclick="toggleUserRole(\'' + doc.id + '\',\'admin\')">⬆ Admin</button>' : '<button class="btn-sm btn-del" onclick="toggleUserRole(\'' + doc.id + '\',\'user\')">⬇ User</button>') + '</td>' +
+          '</tr>';
+      });
+      document.getElementById('usersTableBody').innerHTML = html || '<tr><td colspan="6">Chưa có người dùng</td></tr>';
+    } catch (e) { console.error(e); }
+  }
+
+  window.toggleUserRole = async function (uid, role) {
+    try {
+      await db.collection('users').doc(uid).update({ role: role });
+      showToast('✅ Đã đổi role thành ' + role);
+      loadUsersAdmin();
+    } catch (e) { showToast('❌ Lỗi'); }
+  };
+
+  /* --------------------- LOGIN ------------------------ */
+
+  window.handleAdminLogin = function (e) {
+    e.preventDefault();
+    var email = document.getElementById('adminEmail').value;
+    var password = document.getElementById('adminPassword').value;
+    if (typeof loginAdmin === 'function') loginAdmin(email, password);
+  };
+
+  /* --------------------- HELPERS ---------------------- */
+
+  function showToast(msg) {
+    var toast = document.getElementById('toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(function () { toast.style.opacity = '0'; }, 4000);
+  }
+
+  // Auto-check admin login
+  if (typeof auth !== 'undefined' && auth) {
+    auth.onAuthStateChanged(function (user) {
+      if (user) {
+        db.collection('users').doc(user.uid).get().then(function (doc) {
+          if (doc.exists && doc.data().role === 'admin') {
+            isAdmin = true;
+            window.loadAdminPanel();
+          }
+        });
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>

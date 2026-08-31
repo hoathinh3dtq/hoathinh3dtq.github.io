@@ -138,56 +138,59 @@ function toggleBookmark(el) {
   }
 }
 
-/* === Simulated login (demo only) === */
+/* === Real login/register === */
 function handleLogin(event) {
   event.preventDefault();
-  var username = document.getElementById('loginUsername');
-  var password = document.getElementById('loginPassword');
+  var emailEl = document.getElementById('loginEmail');
+  var phoneEl = document.getElementById('loginPhone');
+  var passwordEl = document.getElementById('loginPassword');
 
-  if (username && password && username.value && password.value) {
-    // Simulated login success
-    var overlay = document.getElementById('loginModal');
-    if (overlay) {
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-    showLoggedInState();
+  var email = emailEl && emailEl.style.display !== 'none' ? emailEl.value.trim() : '';
+  var phone = phoneEl && phoneEl.style.display !== 'none' ? phoneEl.value.trim() : '';
+  var password = passwordEl ? passwordEl.value : '';
+
+  if (!password) { showToast('❌ Vui lòng nhập mật khẩu'); return false; }
+  if (phone) {
+    if (typeof loginWithPhone === 'function') loginWithPhone(phone, password);
+  } else if (email) {
+    if (!email.includes('@')) { showToast('❌ Email không hợp lệ'); return false; }
+    if (typeof loginUser === 'function') loginUser(email, password);
+  } else {
+    showToast('❌ Vui lòng nhập email hoặc số điện thoại');
   }
   return false;
 }
 
-function showLoggedInState() {
-  var actions = document.querySelector('.header-actions');
-  if (!actions) return;
-  actions.innerHTML = `
-    <a href="javascript:void(0)">Lịch sử</a>
-    <a href="javascript:void(0)">Bookmark</a>
-    <div class="user-dropdown">
-      <span class="user-dropdown-toggle">👤 Tài khoản ▾</span>
-      <div class="user-dropdown-menu">
-        <a href="javascript:void(0)">Thông tin cá nhân</a>
-        <a href="javascript:void(0)">Vòng quay may mắn</a>
-        <a href="javascript:void(0)">Điểm danh hàng ngày</a>
-        <a href="javascript:void(0)">Đổi hệ thống tu luyện</a>
-        <a href="javascript:void(0)">Cài đặt pháp bảo</a>
-        <a href="javascript:void(0)">Bí cảnh</a>
-        <a href="javascript:void(0)">Khung avatar</a>
-        <a href="javascript:void(0)">Bách bảo các</a>
-        <a href="javascript:void(0)">Pháp tướng</a>
-        <a href="javascript:void(0)" class="logout" onclick="showLoggedOutState()">Đăng Xuất</a>
-      </div>
-    </div>
-  `;
-  initUserDropdown();
+function handleRegister(event) {
+  event.preventDefault();
+  var nameEl = document.getElementById('regName');
+  var emailEl = document.getElementById('regEmail');
+  var phoneEl = document.getElementById('regPhone');
+  var passwordEl = document.getElementById('regPassword');
+
+  var name = nameEl ? nameEl.value.trim() : '';
+  var email = emailEl ? emailEl.value.trim() : '';
+  var phone = phoneEl ? phoneEl.value.trim() : '';
+  var password = passwordEl ? passwordEl.value : '';
+
+  if (!name) { showToast('❌ Vui lòng nhập tên hiển thị'); return false; }
+  if (!email || !email.includes('@')) { showToast('❌ Email không hợp lệ'); return false; }
+  if (!password || password.length < 6) { showToast('❌ Mật khẩu tối thiểu 6 ký tự'); return false; }
+  if (typeof registerUser === 'function') registerUser(email, password, name);
+  return false;
 }
 
-function showLoggedOutState() {
-  var actions = document.querySelector('.header-actions');
-  if (!actions) return;
-  actions.innerHTML = `
-    <a href="javascript:void(0)">Lịch sử</a>
-    <a href="javascript:void(0)">Bookmark</a>
-    <a href="javascript:void(0)" id="btnLogin" class="btn-login">Đăng nhập</a>
-  `;
-  initLoginModal();
+function switchAuthTab(tab, btn) {
+  document.querySelectorAll('#loginModal .tab-btn').forEach(function (b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('loginTab').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerTab').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function switchLoginMethod(method, btn) {
+  var row = btn.parentElement;
+  row.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('loginEmailGroup').style.display = method === 'email' ? 'block' : 'none';
+  document.getElementById('loginPhoneGroup').style.display = method === 'phone' ? 'block' : 'none';
 }

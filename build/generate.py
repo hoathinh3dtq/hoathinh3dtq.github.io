@@ -205,9 +205,35 @@ DETAIL_SCRIPT = """<script>
     document.getElementById('animeDetail').innerHTML = html;
 
     // render episodes
-    renderEpisodes(epList, 'all');
     window._epList = epList;
     window._slug = slug;
+
+    window.renderEpisodes = function(epList, filter) {
+      var ehtml = '';
+      for (var i = 0; i < epList.length; i++) {
+        var ep = epList[i];
+        if (filter !== 'all' && ep.type !== filter) continue;
+        var badge = ep.type === 'vietsub'
+          ? '<span class="ep-badge vietsub">VietSub</span>'
+          : '<span class="ep-badge thuyetminh">Thuyết Minh</span>';
+        ehtml += '<div class="episode-item">';
+        ehtml += '<span class="ep-num">Tập ' + esc(String(ep.episode_number || '?')) + '</span>';
+        ehtml += badge;
+        ehtml += '<a href="player.html?slug=' + encodeURIComponent(window._slug) + '&amp;ep=' + esc(String(ep.episode_number || '?')) + '" class="ep-link">▶ Xem</a>';
+        ehtml += '</div>';
+      }
+      if (!ehtml) ehtml = '<p style="color:#888;padding:15px;">Không có tập nào.</p>';
+      document.getElementById('episodesContainer').innerHTML = ehtml;
+    };
+
+    window.switchEpType = function(type, btn) {
+      document.querySelectorAll('.ep-tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      window.renderEpisodes(window._epList || [], type);
+    };
+
+    // initial render
+    window.renderEpisodes(epList, 'all');
 
     // load comments and votes
     if (typeof loadComments === 'function') loadComments(slug);
@@ -217,36 +243,12 @@ DETAIL_SCRIPT = """<script>
       '<div style="text-align:center;padding:50px;color:#888;">' +
       '<h2>⚠ Lỗi tải phim</h2>' +
       '<p>' + esc(e.message || String(e)) + '</p>' +
-      '<a href="index.html" style="display:inline-block;margin-top:15px;background:#f5a623;color:#000;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;">🏠 Về trang chủ</a> ' +
-      '<button onclick="location.reload()" style="display:inline-block;margin-top:15px;background:#1a1a1a;color:#f5a623;border:1px solid #333;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">🔄 Thử lại</button>' +
+      '<a href="index.html" style="display:inline-block;margin-top:15px;background:#f5a623;color:#000;padding:10px 20px;border-radius:5px;text-decoration:none;font-weight:600;">\U0001f3e0 Về trang chủ</a> ' +
+      '<button onclick="location.reload()" style="display:inline-block;margin-top:15px;background:#1a1a1a;color:#f5a623;border:1px solid #333;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">\U0001f504 Thử lại</button>' +
       '</div>';
     console.error('[HH3DTQ] detail error:', e);
   });
 })();
-
-function renderEpisodes(epList, filter) {
-  var html = '';
-  for (var i = 0; i < epList.length; i++) {
-    var ep = epList[i];
-    if (filter !== 'all' && ep.type !== filter) continue;
-    var badge = ep.type === 'vietsub'
-      ? '<span class="ep-badge vietsub">VietSub</span>'
-      : '<span class="ep-badge thuyetminh">Thuyết Minh</span>';
-    html += '<div class="episode-item">';
-    html += '<span class="ep-num">Tập ' + esc(String(ep.episode_number || '?')) + '</span>';
-    html += badge;
-    html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(ep.episode_number || '?')) + '" class="ep-link">▶ Xem</a>';
-    html += '</div>';
-  }
-  if (!html) html = '<p style="color:#888;padding:15px;">Không có tập nào.</p>';
-  document.getElementById('episodesContainer').innerHTML = html;
-}
-
-function switchEpType(type, btn) {
-  document.querySelectorAll('.ep-tab').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  renderEpisodes(window._epList || [], type);
-}
 </script>"""
 
 SEARCH_SCRIPT = """<script>

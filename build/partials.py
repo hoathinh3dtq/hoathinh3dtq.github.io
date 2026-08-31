@@ -164,7 +164,9 @@ def scripts(rel=""):
   <script src="{rel}js/main.js"></script>
   <script src="{rel}js/image-map.js"></script>
   <script src="{rel}js/data.js"></script>
-  <script src="{rel}js/render.js"></script>"""
+  <script src="{rel}js/render.js"></script>
+  <script src="{rel}js/features.js"></script>
+"""
 
 def protect():
     """Disable right-click + F12 DevTools for casual users."""
