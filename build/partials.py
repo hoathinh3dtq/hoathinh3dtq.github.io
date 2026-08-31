@@ -166,6 +166,31 @@ def scripts(rel=""):
   <script src="{rel}js/data.js"></script>
   <script src="{rel}js/render.js"></script>"""
 
+def protect():
+    """Disable right-click + F12 DevTools for casual users."""
+    return """<script>
+(function() {
+  'use strict';
+  // disable right-click
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+  // disable F12, Ctrl+Shift+I/J/C, Ctrl+U
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+        (e.ctrlKey && e.key === 'U') ||
+        (e.ctrlKey && e.key === 's') ||
+        (e.ctrlKey && e.key === 'S')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  // warn in console
+  console.log('%c⚠ Cảnh báo bảo mật | Security Warning', 'color:red;font-size:20px;');
+  console.log('%cKhông dán bất kỳ lệnh nào vào đây nếu bạn không hiểu nó.', 'color:orange;font-size:14px;');
+  console.log('%cDo not paste anything here unless you understand it.', 'color:orange;font-size:14px;');
+})();
+</script>"""
+
 def page_wrap(title, desc, active, rel, main_html, extra_script=""):
     """Wrap all partials into a complete HTML page."""
     return f"""<!DOCTYPE html>
@@ -185,6 +210,8 @@ def page_wrap(title, desc, active, rel, main_html, extra_script=""):
 {footer(rel)}
 
 {login_modal()}
+
+{protect()}
 
 {scripts(rel)}
 {extra_script}
