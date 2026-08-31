@@ -211,8 +211,25 @@ async function loginAdmin(email, password) {
   if (!FIREBASE_READY) { showToast("⚠ Firebase chưa được cấu hình"); return false; }
   try {
     await auth.signInWithEmailAndPassword(email, password);
-    const userDoc = await db.collection("users").doc(auth.currentUser.uid).get();
-    if (!userDoc.exists || userDoc.data().role !== "admin") {
+    const uid = auth.currentUser.uid;
+    // Ensure admin role before checking
+    const userDoc = await db.collection("users").doc(uid).get();
+    let role = userDoc.exists ? userDoc.data().role : null;
+    if (role !== "admin") {
+      if (email === ADMIN_EMAIL) {
+        // Designated admin — always promote
+        await db.collection("users").doc(uid).set({ email: email, role: "admin" }, { merge: true });
+        role = "admin";
+      } else {
+        // If no admin exists yet, promote this user
+        const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
+        if (adminCheck.empty) {
+          await db.collection("users").doc(uid).update({ role: "admin" });
+          role = "admin";
+        }
+      }
+    }
+    if (role !== "admin") {
       await auth.signOut();
       showToast("❌ Không phải admin!");
       return false;
