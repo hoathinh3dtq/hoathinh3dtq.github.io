@@ -235,6 +235,43 @@
   global.toggleBookmark = toggleBookmark;
   global.showBookmarkModal = showBookmarkModal;
   global.showHistoryModal = showHistoryModal;
+  global.showProfileModal = showProfileModal;
+
+  /* ======================== PROFILE ======================== */
+
+  var _profileModalHTML = null;
+
+  function showProfileModal() {
+    if (!_profileModalHTML) {
+      var user = (typeof currentUser !== 'undefined') ? currentUser : null;
+      var name = user ? (user.displayName || user.email || 'Người dùng') : 'Người dùng';
+      var email = user ? (user.email || 'Chưa có') : 'Chưa có';
+      var uid = user ? (user.uid || '') : '';
+      var created = user && user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('vi-VN') : 'N/A';
+      var histCount = getHistory().length;
+      var bmCount = getBookmarks().length;
+      _profileModalHTML =
+        '<div class="modal-overlay" id="profileModal">' +
+        '<div class="modal" style="max-width:420px;">' +
+        '<button class="modal-close" onclick="document.getElementById(\'profileModal\').remove();document.body.style.overflow=\'\';">✕</button>' +
+        '<h2>👤 Thông tin cá nhân</h2>' +
+        '<div style="background:#111;border-radius:8px;padding:15px;margin:15px 0;">' +
+        '<p style="margin:8px 0;"><strong>Tên:</strong> ' + R.esc(name) + '</p>' +
+        '<p style="margin:8px 0;"><strong>Email:</strong> ' + R.esc(email) + '</p>' +
+        '<p style="margin:8px 0;"><strong>UID:</strong> <code style="font-size:11px;color:#888;">' + R.esc(uid.substring(0, 12)) + '...</code></p>' +
+        '<p style="margin:8px 0;"><strong>Tham gia:</strong> ' + R.esc(created) + '</p>' +
+        '<p style="margin:8px 0;"><strong>📜 Lịch sử:</strong> ' + histCount + ' mục</p>' +
+        '<p style="margin:8px 0;"><strong>🔖 Bookmark:</strong> ' + bmCount + ' mục</p>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'profileModal\').remove();document.body.style.overflow=\'\';" style="width:100%;background:#f5a623;color:#000;border:none;padding:10px;border-radius:5px;cursor:pointer;font-weight:600;font-family:inherit;">Đóng</button>' +
+        '</div></div>';
+    }
+    document.body.insertAdjacentHTML('beforeend', _profileModalHTML);
+    document.body.style.overflow = 'hidden';
+    document.getElementById('profileModal').addEventListener('click', function (e) {
+      if (e.target === this) { this.remove(); document.body.style.overflow = ''; }
+    });
+  }
 
   /* ======================== INIT ======================== */
 
@@ -243,7 +280,7 @@
     var headerActions = document.querySelector('.header-actions');
     if (!headerActions) return;
 
-    // Find History and Bookmark links
+    // Find History, Bookmark, and Profile links
     var links = headerActions.querySelectorAll('a');
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.trim();
@@ -255,6 +292,10 @@
         links[i].href = 'javascript:void(0)';
         links[i].setAttribute('data-has-handler', '1');
         links[i].onclick = function (e) { e.preventDefault(); showBookmarkModal(); };
+      } else if (text === 'Thông tin cá nhân' || text === '👤 Thông tin cá nhân') {
+        links[i].href = 'javascript:void(0)';
+        links[i].setAttribute('data-has-handler', '1');
+        links[i].onclick = function (e) { e.preventDefault(); showProfileModal(); };
       }
     }
   }
@@ -357,6 +398,8 @@
         currentUser = user;
         mergeUserData();
       }
+      // Re-attach header handlers after auth state change (app.js replaces innerHTML)
+      setTimeout(initHeaderActions, 100);
     });
   }
 

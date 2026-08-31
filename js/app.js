@@ -99,19 +99,19 @@ function updateUIForAuth() {
   if (!headerActions) return;
   if (currentUser) {
     const displayName = currentUser.displayName || currentUser.email || "User";
-    headerActions.innerHTML = '<a href="javascript:void(0)" onclick="showToast(\'📜 Lịch sử xem phim\')">Lịch sử</a>' +
-      '<a href="javascript:void(0)" onclick="showToast(\'🔖 Bookmark của bạn\')">Bookmark</a>' +
+    headerActions.innerHTML = '<a href="javascript:void(0)" onclick="if(window.showHistoryModal){window.showHistoryModal()}">Lịch sử</a>' +
+      '<a href="javascript:void(0)" onclick="if(window.showBookmarkModal){window.showBookmarkModal()}">Bookmark</a>' +
       '<div class="user-dropdown">' +
       '<span class="user-dropdown-toggle">👤 ' + escapeHtml(displayName) + ' ▾</span>' +
       '<div class="user-dropdown-menu">' +
-      '<a href="javascript:void(0)" onclick="showToast(\'👤 Thông tin cá nhân\')">Thông tin cá nhân</a>' +
+      '<a href="javascript:void(0)" onclick="if(window.showProfileModal){window.showProfileModal()}else{showToast(\'👤 Thông tin cá nhân\')}">Thông tin cá nhân</a>' +
       (isAdmin ? '<a href="admin.html" style="color:#f5a623;">⚙ Admin Panel</a>' : "") +
       '<a href="javascript:void(0)" class="logout" onclick="logout()">Đăng Xuất</a>' +
       '</div></div>';
     initUserDropdown();
   } else {
-    headerActions.innerHTML = '<a href="javascript:void(0)" onclick="showToast(\'📜 Lịch sử xem phim\')">Lịch sử</a>' +
-      '<a href="javascript:void(0)" onclick="showToast(\'🔖 Bookmark của bạn\')">Bookmark</a>' +
+    headerActions.innerHTML = '<a href="javascript:void(0)" onclick="if(window.showHistoryModal){window.showHistoryModal()}">Lịch sử</a>' +
+      '<a href="javascript:void(0)" onclick="if(window.showBookmarkModal){window.showBookmarkModal()}">Bookmark</a>' +
       '<a href="javascript:void(0)" id="btnLogin" class="btn-login">Đăng nhập</a>';
     initLoginModal();
   }
@@ -527,7 +527,7 @@ document.addEventListener("DOMContentLoaded", function() {
   initGenreDropdown();
   // Add feedback to all javascript:void(0) links that don't have handlers
   document.querySelectorAll('a[href="javascript:void(0)"]').forEach(function(a) {
-    if (!a.hasAttribute("data-has-handler")) {
+    if (!a.hasAttribute("data-has-handler") && !a.closest(".header-actions")) {
       a.addEventListener("click", function(e) {
         var text = a.textContent.trim();
         if (text && text !== "▾" && text !== "✕" && !a.closest(".user-dropdown") && !a.closest(".genre-dropdown")) {
