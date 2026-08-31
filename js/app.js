@@ -86,23 +86,12 @@ if (FIREBASE_READY && auth) {
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
-      try {
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        isAdmin = userDoc.exists && userDoc.data().role === "admin";
-        // Auto-promote: designated admin email OR if no admin exists yet
-        if (!isAdmin) {
-          if (user.email === ADMIN_EMAIL) {
-            await db.collection("users").doc(user.uid).set({ role: "admin", email: user.email }, { merge: true });
-            isAdmin = true;
-          } else {
-            const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
-            if (adminCheck.empty) {
-              await db.collection("users").doc(user.uid).update({ role: "admin" });
-              isAdmin = true;
-            }
-          }
-        }
-      } catch(e) { isAdmin = false; }
+      // Only the designated email is admin
+      isAdmin = (user.email === ADMIN_EMAIL);
+      // Try to ensure Firestore doc exists with admin role
+      if (isAdmin) {
+        try { await db.collection("users").doc(user.uid).set({ email: user.email, role: "admin" }, { merge: true }); } catch(e) {}
+      }
     } else {
       isAdmin = false;
     }
@@ -144,23 +133,17 @@ function escapeHtml(str) {
 
 async function registerUser(email, password, displayName, phone) {
   if (!FIREBASE_READY) { showToast("⚠ Firebase chưa được cấu hình. Vui lòng liên hệ admin qua Telegram: @scanhihi"); return false; }
+  // Only the designated admin email can register
+  if (email !== ADMIN_EMAIL) {
+    showToast("❌ Đăng ký đã bị khóa. Liên hệ admin qua Telegram: @scanhihi");
+    return false;
+  }
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName });
-    // Save user to Firestore (phone included)
     try {
-      // First user to register becomes the sole admin
-      let role = "user";
-      if (email === ADMIN_EMAIL) {
-        role = "admin";
-      } else {
-        try {
-          const adminCheck = await db.collection("users").where("role", "==", "admin").limit(1).get();
-          if (adminCheck.empty) role = "admin";
-        } catch(e) { /* if query fails, default to user */ }
-      }
       await db.collection("users").doc(cred.user.uid).set({
-        email, displayName, role: role,
+        email, displayName, role: "admin",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         phone: phone || "", bookmarks: [], history: []
       });
