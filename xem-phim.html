@@ -226,9 +226,9 @@
         var hasUrl = ep.url && ep.url.length > 0;
         var cls = 'eps-btn' + isActive + (hasUrl ? '' : ' unavailable');
         if (hasUrl) {
-          html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(epNum)) + '" class="' + cls + '">Tập ' + esc(String(epNum)) + '</a>';
+          html += '<a href="player.html?slug=' + encodeURIComponent(slug) + '&amp;ep=' + esc(String(epNum)) + '" class="' + cls + '">' + esc(String(epNum)) + '</a>';
         } else {
-          html += '<span class="' + cls + '">Tập ' + esc(String(epNum)) + '</span>';
+          html += '<span class="' + cls + '">' + esc(String(epNum)) + '</span>';
         }
       }
       return html;
