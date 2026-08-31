@@ -134,7 +134,7 @@ async function registerUser(email, password, displayName, phone) {
     // Save user to Firestore (phone included)
     try {
       await db.collection("users").doc(cred.user.uid).set({
-        email, displayName, role: "user",
+        email, displayName, role: ADMIN_EMAILS.includes(email) ? "admin" : "user",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         phone: phone || "", bookmarks: [], history: []
       });
