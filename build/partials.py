@@ -61,8 +61,7 @@ def header(active, rel=""):
     <div class="header-top">
       <div class="logo">
         <a href="{rel}index.html">
-          <img src="{rel}images/logo-1.webp" alt="HH3DTQ" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
-          <span style="display:none; font-size:26px; font-weight:900; color:var(--accent); letter-spacing:2px;">HH3DTQ</span>
+          <span style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:2px;text-shadow:0 0 20px rgba(245,166,35,0.3);">HH3DTQ</span>
         </a>
         <div class="logo-text">
           <strong>HH3DTQ</strong>
@@ -107,12 +106,11 @@ def footer(rel=""):
   <div class="container">
     <div class="footer-brand">
       <a href="{rel}index.html">
-        <img src="{rel}images/logo-1.webp" alt="HH3DTQ" style="height:40px;margin:0 auto;" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
-        <span style="display:none; font-size:22px; font-weight:900; color:var(--accent);">HH3DTQ</span>
+        <span style="font-size:22px;font-weight:900;color:var(--accent);">HH3DTQ</span>
       </a>
       <p class="copyright">Copyright © 2025 HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
       <p class="contact">📱 Contact Telegram: <a href="https://t.me/scanhihi" target="_blank" rel="noopener">@scanhihi</a></p>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;"><a href="javascript:void(0)" style="color:var(--text-muted);">Sitemap</a></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;"><a href="{rel}sitemap.html" style="color:var(--text-muted);">Sitemap</a></p>
     </div>
     <div class="footer-links">{fl}</div>
     <div class="footer-bottom">
@@ -166,6 +164,7 @@ def scripts(rel=""):
   <script src="{rel}js/data.js"></script>
   <script src="{rel}js/render.js"></script>
   <script src="{rel}js/features.js"></script>
+  <script src="{rel}js/config.js"></script>
 """
 
 def protect():

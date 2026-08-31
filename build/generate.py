@@ -22,9 +22,19 @@ INDEX_SCRIPT = """<script>
 (function() {
   var D = window.HH3D, R = window.HH3DRender;
   D.ready().then(function() {
-    // trending section: top 12 by rating
-    var trending = D.sorted('rating').slice(0, 12);
-    R.renderGrid(document.getElementById('trendingGrid'), trending, 'anime', 1);
+    // trending section: Firestore admin config, fallback to top 12 by rating
+    function renderFallbackTrending() {
+      var trending = D.sorted('rating').slice(0, 12);
+      R.renderGrid(document.getElementById('trendingGrid'), trending, 'anime', 1);
+    }
+    var C = window.HH3DConfig;
+    if (C && C.getTrendingItems) {
+      C.getTrendingItems().then(function(tcfg) {
+        if (tcfg && tcfg.items && tcfg.items.length > 0) {
+          R.renderGrid(document.getElementById('trendingGrid'), tcfg.items.slice(0, tcfg.count), 'anime', 1);
+        } else { renderFallbackTrending(); }
+      }).catch(function() { renderFallbackTrending(); });
+    } else { renderFallbackTrending(); }
 
     // schedule tabs: 7 days from data/schedule.json
     var scheduleEl = document.getElementById('scheduleSection');
@@ -139,13 +149,17 @@ DETAIL_SCRIPT = """<script>
   }
   function esc(s) { return R.esc(s); }
   function poster(r) { return R.poster(r); }
-  D.ready().then(function() {
-    var url = D.base() + 'data/series/' + encodeURIComponent(slug) + '.json';
-    return fetch(url).then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    });
-  }).then(function(data) {
+  var C = window.HH3DConfig;
+  var dataPromise = (C && C.loadSeriesData)
+    ? C.loadSeriesData(slug)
+    : D.ready().then(function() {
+        var url = D.base() + 'data/series/' + encodeURIComponent(slug) + '.json';
+        return fetch(url).then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+      });
+  dataPromise.then(function(data) {
     var epList = data.episodes || [];
     var metaHtml = '';
     // genre
@@ -431,6 +445,45 @@ def gen_category():
         pages.append((f'category/{gslug}.html', html))
     return pages
 
+def gen_sitemap():
+    """Generate sitemap.html listing all pages."""
+    links = [
+        ('index.html', '🏠 Trang chủ'),
+        ('moi-cap-nhat.html', '🆕 Mới Cập Nhật'),
+        ('top-xem-nhieu.html', '🏆 Top Xem Nhiều'),
+        ('lich-chieu.html', '📅 Lịch Chiếu'),
+        ('hoan-thanh.html', '✅ Hoàn Thành'),
+        ('tim-kiem.html', '🔍 Tìm kiếm'),
+    ]
+    cat_links = [(f'category/{gslug}.html', f'🎭 {gname}') for gslug, gname in GENRES]
+
+    main = """  <section>
+    <h2 class="section-heading"><span class="icon">🗺</span> Sitemap</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px;margin-top:20px;">
+      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:20px;">
+        <h3 style="color:#f5a623;margin-bottom:12px;">📄 Trang Chính</h3>
+        <ul style="list-style:none;padding:0;">"""
+    for href, label in links:
+        main += f'\n          <li style="padding:6px 0;"><a href="{href}" style="color:#ccc;">{label}</a></li>'
+    main += """
+        </ul>
+      </div>
+      <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:20px;">
+        <h3 style="color:#f5a623;margin-bottom:12px;">🎭 Thể Loại</h3>
+        <ul style="list-style:none;padding:0;">"""
+    for href, label in cat_links:
+        main += f'\n          <li style="padding:6px 0;"><a href="{href}" style="color:#ccc;">{label}</a></li>'
+    main += """
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:30px;color:#888;font-size:13px;text-align:center;">HH3DTQ — Kho phim hoạt hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
+  </section>"""
+    return page_wrap(
+        'Sitemap - HH3DTQ',
+        'HH3DTQ - Sitemap - Danh sách tất cả trang. Phim hoạt hình 3D Trung Quốc 4K.',
+        None, '', main, '')
+
 # ---- main ----
 
 def write_file(path, content):
@@ -451,6 +504,7 @@ def main():
         ('lich-chieu.html', gen_lich_chieu()),
         ('xem-phim.html', gen_xem_phim()),
         ('tim-kiem.html', gen_tim_kiem()),
+        ('sitemap.html', gen_sitemap()),
     ]
 
     for fname, html in pages:

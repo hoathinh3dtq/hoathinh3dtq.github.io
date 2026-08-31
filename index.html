@@ -23,8 +23,7 @@
     <div class="header-top">
       <div class="logo">
         <a href="index.html">
-          <img src="images/logo-1.webp" alt="HH3DTQ" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
-          <span style="display:none; font-size:26px; font-weight:900; color:var(--accent); letter-spacing:2px;">HH3DTQ</span>
+          <span style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:2px;text-shadow:0 0 20px rgba(245,166,35,0.3);">HH3DTQ</span>
         </a>
         <div class="logo-text">
           <strong>HH3DTQ</strong>
@@ -91,12 +90,11 @@
   <div class="container">
     <div class="footer-brand">
       <a href="index.html">
-        <img src="images/logo-1.webp" alt="HH3DTQ" style="height:40px;margin:0 auto;" onerror="this.style.display=&#39;none&#39;; this.nextElementSibling.style.display=&#39;block&#39;;">
-        <span style="display:none; font-size:22px; font-weight:900; color:var(--accent);">HH3DTQ</span>
+        <span style="font-size:22px;font-weight:900;color:var(--accent);">HH3DTQ</span>
       </a>
       <p class="copyright">Copyright © 2025 HH3DTQ - Phim Hoạt Hình 3D Trung Quốc 4K Thuyết Minh VietSub</p>
       <p class="contact">📱 Contact Telegram: <a href="https://t.me/scanhihi" target="_blank" rel="noopener">@scanhihi</a></p>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;"><a href="javascript:void(0)" style="color:var(--text-muted);">Sitemap</a></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;"><a href="sitemap.html" style="color:var(--text-muted);">Sitemap</a></p>
     </div>
     <div class="footer-links"><a href="javascript:void(0)">hhkungfu</a><a href="javascript:void(0)">hhpanda</a><a href="javascript:void(0)">xoilac</a><a href="javascript:void(0)">GG88</a><a href="javascript:void(0)">Sunwin</a><a href="javascript:void(0)">CakhiaTV</a><a href="javascript:void(0)">Vebo</a><a href="javascript:void(0)">qq88</a><a href="javascript:void(0)">M7</a><a href="javascript:void(0)">new88</a><a href="javascript:void(0)">f8bet</a><a href="javascript:void(0)">Socolive</a><a href="javascript:void(0)">Hitclub</a><a href="javascript:void(0)">Jun88</a><a href="javascript:void(0)">rophim</a><a href="javascript:void(0)">iwin68</a><a href="javascript:void(0)">gavangtv</a><a href="javascript:void(0)">Vip66</a><a href="javascript:void(0)">rakhoitv</a><a href="javascript:void(0)">Go88</a><a href="javascript:void(0)">789Club</a><a href="javascript:void(0)">B52club</a><a href="javascript:void(0)">topbet</a><a href="javascript:void(0)">bong88</a><a href="javascript:void(0)">8day</a><a href="javascript:void(0)">RIKVIP</a><a href="javascript:void(0)">xoso66</a><a href="javascript:void(0)">ee88</a><a href="javascript:void(0)">s8net</a><a href="javascript:void(0)">ao88game</a><a href="javascript:void(0)">uy88play</a><a href="javascript:void(0)">23win</a><a href="javascript:void(0)">188mfun</a><a href="javascript:void(0)">luck8386</a><a href="javascript:void(0)">SONCLUB</a><a href="javascript:void(0)">nohu90</a><a href="javascript:void(0)">MM88</a><a href="javascript:void(0)">say88</a><a href="javascript:void(0)">XX88</a><a href="javascript:void(0)">FLY88</a><a href="javascript:void(0)">F168</a><a href="javascript:void(0)">Viva88</a><a href="javascript:void(0)">kubet</a><a href="javascript:void(0)">RR88</a><a href="javascript:void(0)">c168</a><a href="javascript:void(0)">Good88</a><a href="javascript:void(0)">zo88</a><a href="javascript:void(0)">HI88</a><a href="javascript:void(0)">sv88</a><a href="javascript:void(0)">luongson</a><a href="javascript:void(0)">sao789</a><a href="javascript:void(0)">8XBET</a><a href="javascript:void(0)">mmlive</a><a href="javascript:void(0)">sin88</a><a href="javascript:void(0)">may88</a><a href="javascript:void(0)">9bet</a></div>
     <div class="footer-bottom">
@@ -169,14 +167,25 @@
   <script src="js/data.js"></script>
   <script src="js/render.js"></script>
   <script src="js/features.js"></script>
+  <script src="js/config.js"></script>
 
 <script>
 (function() {
   var D = window.HH3D, R = window.HH3DRender;
   D.ready().then(function() {
-    // trending section: top 12 by rating
-    var trending = D.sorted('rating').slice(0, 12);
-    R.renderGrid(document.getElementById('trendingGrid'), trending, 'anime', 1);
+    // trending section: Firestore admin config, fallback to top 12 by rating
+    function renderFallbackTrending() {
+      var trending = D.sorted('rating').slice(0, 12);
+      R.renderGrid(document.getElementById('trendingGrid'), trending, 'anime', 1);
+    }
+    var C = window.HH3DConfig;
+    if (C && C.getTrendingItems) {
+      C.getTrendingItems().then(function(tcfg) {
+        if (tcfg && tcfg.items && tcfg.items.length > 0) {
+          R.renderGrid(document.getElementById('trendingGrid'), tcfg.items.slice(0, tcfg.count), 'anime', 1);
+        } else { renderFallbackTrending(); }
+      }).catch(function() { renderFallbackTrending(); });
+    } else { renderFallbackTrending(); }
 
     // schedule tabs: 7 days from data/schedule.json
     var scheduleEl = document.getElementById('scheduleSection');
